@@ -1,0 +1,23 @@
+All stuff that needs to be done should be listed here. Highest priority items first, and stuff from the future last.
+
+
+Most Important:
+-Decide on map format.
+-Decide on 3d-model format.
+
+
+
+Relevant stuff:
+-Get some sample texture set for walls and floors and balls.
+-Get some sample models for buildings.
+-Display cursor in game, make UI widgets (buttons, labesl, textboxes, etc.)
+
+
+Minor stuff:
+-Figure out a good way to switch resolutions
+-Make a main menu (learn text rendering. See lwjgl slick util tutorial).
+
+
+
+Future features:
+-Destructible environments
