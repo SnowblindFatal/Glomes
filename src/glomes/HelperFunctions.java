@@ -8,6 +8,8 @@ package glomes;
  *
  * @author juho
  */
+
+//All (most?) helpful helper functions go here :)
 public class HelperFunctions {
     
 }

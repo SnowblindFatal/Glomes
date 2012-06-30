@@ -8,6 +8,11 @@ package glomes;
  *
  * @author juho
  */
-public class GameStateTemplate {
-    
+public abstract class GameStateTemplate {
+    Glomes game;
+    public GameStateTemplate(Glomes newgame){
+        game = newgame;
+    }
+    public abstract void run();
 }
+
