@@ -19,10 +19,13 @@ public class Game extends GameStateTemplate {
     
     @Override
     public void run(){
+        System.out.println("moved to game");
         while (quitBoolean == false){
             draw();
-            System.out.println("moved to game");
             quitBoolean = true;
+            if (Display.isCloseRequested()) {
+                quitBoolean = true;
+            }
         }
     }
     

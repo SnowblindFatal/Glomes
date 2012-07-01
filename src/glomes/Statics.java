@@ -9,7 +9,25 @@ package glomes;
  * @author juho
  */
 public class Statics {
+    
     public static final String TITLE = "Glomes";
     public static final int FRAMERATE = 60, MENU_STATE = 0, GAME_STATE = 1;
-    public static int DisplayWidth = 800, DisplayHeight = 600;
+    
+    private static int DisplayWidth = 800, DisplayHeight = 600;
+
+    
+    public static int getDisplayWidth() {
+        return DisplayWidth;
+    }
+    public static int getDisplayHeight() {
+        return DisplayHeight;
+    }
+    public static void setResolution(int aDisplayWidth, int aDisplayHeight) {
+        DisplayWidth = aDisplayWidth;
+        DisplayHeight = aDisplayHeight;
+    }
+    public static int[] getResolution() {
+        return new int[] {DisplayWidth, DisplayHeight};
+    }
+    
 }

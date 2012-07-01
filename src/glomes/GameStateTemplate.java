@@ -4,11 +4,13 @@
  */
 package glomes;
 
+import de.matthiasmann.twl.Widget;
+
 /**
  *
  * @author juho
  */
-public abstract class GameStateTemplate {
+public abstract class GameStateTemplate extends Widget {
     Glomes game;
     public GameStateTemplate(Glomes newgame){
         game = newgame;
