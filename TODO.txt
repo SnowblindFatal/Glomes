@@ -16,6 +16,9 @@ Relevant stuff:
 Minor stuff:
 -Figure out a good way to switch resolutions
 -Make a main menu (learn text rendering. See lwjgl slick util tutorial).
+//Counterpoint: TWL does this and more! We are saved!
+-Counter counterpoint: We need a new UI theme. Do not want grey. Maybe use the other standard TWG theme?
+
 
 
 

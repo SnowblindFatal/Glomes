@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.lwjgl.LWJGLException;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
@@ -27,6 +29,10 @@ public class Menu extends GameStateTemplate {
     private GUI gui;
     private ThemeManager themeManager;
     private LWJGLRenderer renderer;
+    private int eventKey, mouseX, mouseY;
+    
+    //temp stuff for testing:
+    private float rtri, rquad;
     
     
     
@@ -43,18 +49,73 @@ public class Menu extends GameStateTemplate {
         setupButtons();
         while (quitBoolean == false){
             GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-            gui.update();
             draw();
+            handleInput();
+            gui.update();
 
             if (Display.isCloseRequested()){
                 quitBoolean = true;
             }
+            Display.update();
             Display.sync(60);
         }
     }
     
+    private void handleInput(){
+        //handleEvent();
+        mouseX = Mouse.getX();
+        mouseY = Mouse.getY();
+//        System.out.println("X: " + mouseX + ", Y: " + mouseY);
+        while (Keyboard.next()) {
+            eventKey = Keyboard.getEventKey();
+            switch (eventKey) {
+                case Keyboard.KEY_ESCAPE:
+                    quitBoolean = true;
+                    break;
+                case Keyboard.KEY_RETURN:
+                    game.addToStack(Statics.GAME_STATE);
+                    quitBoolean = true;
+                    break;
+                case Keyboard.KEY_SPACE:
+                    break;
+            }
+        }
+        while (Mouse.next()){
+            eventKey = Mouse.getEventButton();
+            System.out.println(eventKey);
+            switch (eventKey){
+                
+            }
+        }
+    }
+    
     private void draw() {
-        Display.update();
+        GL11.glLoadIdentity();                          // Reset The Current Modelview Matrix
+
+        GL11.glTranslatef(-1.5f, 0.0f, -6.0f);                // Move Left 1.5 Units And Into The Screen 6.0
+        GL11.glRotatef(rtri, 0.0f, 1.0f, 0.0f);                // Rotate The Triangle On The Y axis ( NEW )
+        GL11.glBegin(GL11.GL_TRIANGLES);                    // Drawing Using Triangles
+        GL11.glColor3f(1.0f, 0.0f, 0.0f);             // Set The Color To Red
+        GL11.glVertex3f(0.0f, 1.0f, 0.0f);         // Move Up One Unit From Center (Top Point)
+        GL11.glColor3f(0.0f, 1.0f, 0.0f);             // Set The Color To Green
+        GL11.glVertex3f(-1.0f, -1.0f, 0.0f);         // Left And Down One Unit (Bottom Left)
+        GL11.glColor3f(0.0f, 0.0f, 1.0f);             // Set The Color To Blue
+        GL11.glVertex3f(1.0f, -1.0f, 0.0f);         // Right And Down One Unit (Bottom Right)
+        GL11.glEnd();                                       // Finished Drawing The Triangle
+
+        GL11.glLoadIdentity();                          // Reset The Current Modelview Matrix
+        GL11.glTranslatef(1.5f, 0.0f, -6.0f);             // Move Right 1.5 Units And Into The Screen 6.0
+        GL11.glRotatef(rquad, 1.0f, 0.0f, 0.0f);               // Rotate The Quad On The X axis ( NEW )
+        GL11.glColor3f(0.5f, 0.5f, 1.0f);                 // Set The Color To Blue One Time Only
+        GL11.glBegin(GL11.GL_QUADS);                        // Draw A Quad
+        GL11.glVertex3f(-1.0f, 0f, 0.0f);         // Top Left
+        GL11.glVertex3f(1.0f, 0f, 0.0f);         // Top Right
+        GL11.glVertex3f(1.0f, -1.0f, 0.0f);         // Bottom Right
+        GL11.glVertex3f(-1.0f, -1.0f, 0.0f);         // Bottom Left
+        GL11.glEnd();                                       // Done Drawing The Quad
+
+        rtri += 10f;                                       // Increase The Rotation Variable For The Triangle ( NEW )
+        rquad -= 2f;                                 // Decrease The Rotation Variable For The Quad     ( NEW )
     }
     
     private void initTWL(){
@@ -64,7 +125,17 @@ public class Menu extends GameStateTemplate {
             //in here, "this" refers to the screen as a widget, I reckon.
             gui = new GUI(this, renderer);
             //themeManager sets the look of all the widgets on the screen I think.
+            //NOTE: If modifications to the xml-file don't seem to apply, use "Clean and build project" to remove all cached shit.
+            //TODO: Our own custom UI theme. Doesn't need to be anything fancy, just SOMETHING that isn't
+            //classic Windows look from the early 90s.
+            
             themeManager = ThemeManager.createThemeManager(getClass().getResource("/ui_themes/simple.xml"), renderer);
+            //without setTheme the theme defaults to name of the class in lowercase. In this case it would be "menu".
+            setTheme("");
+            //all in all, there seems to be three (four?) themes with the typical UI graphics: 
+            //simple.xml, gui.xml, Eforen.xml and guiTheme.xml.
+            //HOWEVER, of these, I could only get simple.xml to work properly. The others have weird xml
+            //that is probably completely shit by anyone's standards.
             
         } catch (LWJGLException | IOException ex) {
             Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
@@ -77,7 +148,7 @@ public class Menu extends GameStateTemplate {
         buttonAction[0] = new Runnable() {
             @Override
             public void run() {
-                allDone(Statics.GAME_STATE);
+                allDone();
             }
         };
     }
@@ -97,8 +168,8 @@ public class Menu extends GameStateTemplate {
         button[0].setPosition(300, 200);
             
     }
-    private void allDone(int state){
+    private void allDone(){
         quitBoolean = true;
-        game.addToStack(state);
+        game.addToStack(Statics.GAME_STATE);
     }
 }

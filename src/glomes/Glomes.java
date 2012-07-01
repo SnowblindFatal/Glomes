@@ -12,6 +12,7 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.glu.GLU;
 
 /**
  *
@@ -48,14 +49,32 @@ public class Glomes {
         }
         
         Display.setTitle(Statics.TITLE);
-        
-        GL11.glMatrixMode(GL11.GL_PROJECTION);
-        GL11.glLoadIdentity();
-        
         //TODO: Replace with the perspective view mode can't remember whatsitcalled. Also probably redo this whole method.
-        GL11.glOrtho(0, currentResolution[0], 0, currentResolution[1], 1, -1);
-        GL11.glMatrixMode(GL11.GL_MODELVIEW);
-        GL11.glClearColor(0, 0, 0, 1);
+//        GL11.glOrtho(0, currentResolution[0], 0, currentResolution[1], 1, -1);
+
+        
+        
+        GL11.glEnable(GL11.GL_TEXTURE_2D); // Enable Texture Mapping
+        GL11.glShadeModel(GL11.GL_SMOOTH); // Enable Smooth Shading
+        GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Black Background
+        GL11.glClearDepth(1.0); // Depth Buffer Setup
+        GL11.glEnable(GL11.GL_DEPTH_TEST); // Enables Depth Testing
+        GL11.glDepthFunc(GL11.GL_LEQUAL); // The Type Of Depth Testing To Do
+
+        GL11.glMatrixMode(GL11.GL_PROJECTION); // Select The Projection Matrix
+        GL11.glLoadIdentity(); // Reset The Projection Matrix
+
+        // Calculate The Aspect Ratio Of The Window
+        GLU.gluPerspective(
+                45.0f,
+                (float) currentResolution[0] / (float) currentResolution[1],
+                0.1f,
+                100.0f);
+        GL11.glMatrixMode(GL11.GL_MODELVIEW); // Select The Modelview Matrix
+
+        // Really Nice Perspective Calculations
+        GL11.glHint(GL11.GL_PERSPECTIVE_CORRECTION_HINT, GL11.GL_NICEST);
+        
         
     }
     private void stackHandler(){
