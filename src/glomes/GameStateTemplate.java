@@ -15,6 +15,6 @@ public abstract class GameStateTemplate extends Widget {
     public GameStateTemplate(Glomes newgame){
         game = newgame;
     }
-    public abstract void run();
+    public abstract void use();
 }
 

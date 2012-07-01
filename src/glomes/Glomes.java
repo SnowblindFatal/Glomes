@@ -61,7 +61,7 @@ public class Glomes {
     private void stackHandler(){
         while (stateStack.empty() == false){
             currentState = stateStack.pop();
-            currentState.run();
+            currentState.use();
         }
         Display.destroy();
 
@@ -69,10 +69,10 @@ public class Glomes {
     public void addToStack(int newState){
         switch (newState){
             case (Statics.GAME_STATE):
-                gameState.run();
+                gameState.use();
                 break;
             case (Statics.MENU_STATE):
-                menuState.run();
+                menuState.use();
                 break;
         }
     }

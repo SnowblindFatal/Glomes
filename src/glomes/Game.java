@@ -18,7 +18,7 @@ public class Game extends GameStateTemplate {
     }
     
     @Override
-    public void run(){
+    public void use(){
         System.out.println("moved to game");
         while (quitBoolean == false){
             draw();
@@ -26,6 +26,7 @@ public class Game extends GameStateTemplate {
             if (Display.isCloseRequested()) {
                 quitBoolean = true;
             }
+            Display.sync(60);
         }
     }
     
