@@ -178,7 +178,9 @@ public class Menu extends GameStateTemplate {
             //simple.xml, gui.xml, Eforen.xml and guiTheme.xml.
             //HOWEVER, of these, I could only get simple.xml to work properly. The others have weird xml
             //that is probably completely shit by anyone's standards.
-        } catch (LWJGLException | IOException ex) {
+        } catch (LWJGLException ex) {
+            Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
             Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
         }
         
