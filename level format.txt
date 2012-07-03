@@ -1,0 +1,36 @@
+<GENERAL>
+title: The Crossing
+playerAmount: 4
+xSize: 300
+ySize: 100
+
+
+
+<WALLS>
+[NEW]
+id: 0
+material: wood
+vertice: (0, 0; 300, 0; 300, 100; 0, 100; 0, 10; 10, 10; 10, 90; 290, 90; 290, 10; 0, 10)
+[NEW]
+id: 1
+material: metal
+vertice: (141.5, 20; 158.5, 20; 170, 70; 130, 70;)
+<POWER_PLANTS>
+[NEW]
+id: 0
+energy: 30
+vertice: (146, 10; 154,10; 154,20;146,20)
+<LABORATORIES>
+[NEW]
+id: 0
+tech:random_tower
+vertice: (10,10;   10  ,15   ;15,10)
+[NEW]
+id:1
+tech:bomb
+vertice: (290,290;290,285;285,290)
+<PLAYERS>
+[NEW]
+position: 30,30
+[NEW]
+position: 270,270
