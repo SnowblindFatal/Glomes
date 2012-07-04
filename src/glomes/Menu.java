@@ -9,14 +9,20 @@ import de.matthiasmann.twl.EditField;
 import de.matthiasmann.twl.GUI;
 import de.matthiasmann.twl.renderer.lwjgl.LWJGLRenderer;
 import de.matthiasmann.twl.theme.ThemeManager;
+import external.Convexiser;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.vector.Vector3f;
+import org.newdawn.slick.opengl.Texture;
+import org.newdawn.slick.opengl.TextureLoader;
+import org.newdawn.slick.util.ResourceLoader;
 
 /**
  *
@@ -35,7 +41,11 @@ public class Menu extends GameStateTemplate {
     
     //temp stuff for quick 3d testing:
     private float rtri, rquad;
-    
+    private Convexiser convexiser;
+    private List<Vector3f> polygon;
+    private List<List<Vector3f>> triangles;
+    private Vector3f vector;
+    private Texture customTexture;
     
     
     
@@ -48,6 +58,17 @@ public class Menu extends GameStateTemplate {
         System.out.println("moved to menu");
         initTWL();
         
+        //TESTSTUFF:
+        //REMOVE THIS:
+        convexiser = new Convexiser();
+        polygon = new ArrayList();
+        triangles = new ArrayList();
+        //Save this for now:
+        try {
+            customTexture = TextureLoader.getTexture("BMP", ResourceLoader.getResourceAsStream("test/Mud.bmp"));
+        } catch (IOException ex) {
+            Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
         while (quitBoolean == false){
             GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
@@ -98,6 +119,8 @@ public class Menu extends GameStateTemplate {
                         allDone();
                         break;
                     case Keyboard.KEY_SPACE:
+                        //TODO: Remove this shit.
+                        testTriangulation();
                         break;
                     case Keyboard.KEY_F1:
                         
@@ -131,33 +154,74 @@ public class Menu extends GameStateTemplate {
         
     }
     
-    
+    private void testTriangulation(){
+        //in short: convexiser doesn't work properly and turns out to be useless on top of everything.
+        //I'll remove this in the near future.
+        polygon.clear();
+        vector = new Vector3f(2f, 0f, 0f);
+        polygon.add(vector);
+        vector = new Vector3f(2f, 2f, 0f);
+        polygon.add(vector);
+        vector = new Vector3f(1f, 1.5f, 0f);
+        polygon.add(vector);
+        vector = new Vector3f(0f, 2f, 0f);
+        polygon.add(vector);
+        vector = new Vector3f(0f, 0f, 0f);
+        polygon.add(vector);
+        
+        triangles = convexiser.convexise(polygon);
+        System.out.println(polygon.toString());
+        System.out.println(triangles.toString());
+        triangles.clear();
+        
+    }
     private void draw() {
         GL11.glLoadIdentity();                          // Reset The Current Modelview Matrix
 
-        GL11.glTranslatef(-1.5f, 0.0f, -6.0f);                // Move Left 1.5 Units And Into The Screen 6.0
+        GL11.glTranslatef(+1.5f, 0.0f, -6.0f);                // Move Left 1.5 Units And Into The Screen 6.0
         GL11.glRotatef(rtri, 0.0f, 1.0f, 0.0f);                // Rotate The Triangle On The Y axis ( NEW )
-        GL11.glBegin(GL11.GL_TRIANGLES);                    // Drawing Using Triangles
-        GL11.glColor3f(1.0f, 0.0f, 0.0f);             // Set The Color To Red
-        GL11.glVertex3f(0.0f, 1.0f, 0.0f);         // Move Up One Unit From Center (Top Point)
-        GL11.glColor3f(0.0f, 1.0f, 0.0f);             // Set The Color To Green
-        GL11.glVertex3f(-1.0f, -1.0f, 0.0f);         // Left And Down One Unit (Bottom Left)
-        GL11.glColor3f(0.0f, 0.0f, 1.0f);             // Set The Color To Blue
-        GL11.glVertex3f(1.0f, -1.0f, 0.0f);         // Right And Down One Unit (Bottom Right)
-        GL11.glEnd();                                       // Finished Drawing The Triangle
+//        GL11.glBegin(GL11.GL_TRIANGLES);                    // Drawing Using Triangles
+//        GL11.glColor3f(1.0f, 0.0f, 0.0f);             // Set The Color To Red
+//        GL11.glVertex3f(0.0f, 1.0f, 0.0f);         // Move Up One Unit From Center (Top Point)
+//        GL11.glColor3f(0.0f, 1.0f, 0.0f);             // Set The Color To Green
+//        GL11.glVertex3f(-1.0f, -1.0f, 0.0f);         // Left And Down One Unit (Bottom Left)
+//        GL11.glColor3f(0.0f, 0.0f, 1.0f);             // Set The Color To Blue
+//        GL11.glVertex3f(1.0f, -1.0f, 0.0f);         // Right And Down One Unit (Bottom Right)
+//        GL11.glEnd();                                       // Finished Drawing The Triangle
+//
+//        GL11.glLoadIdentity();                          // Reset The Current Modelview Matrix
+//        GL11.glTranslatef(1.5f, 0.0f, -6.0f);             // Move Right 1.5 Units And Into The Screen 6.0
+//        GL11.glRotatef(rquad, 1.0f, 0.0f, 0.0f);               // Rotate The Quad On The X axis ( NEW )
+//        GL11.glColor3f(0.5f, 0.5f, 1.0f);                 // Set The Color To Blue One Time Only
+//        GL11.glBegin(GL11.GL_QUADS);                        // Draw A Quad
+//        GL11.glVertex3f(-1.0f, 0f, 0.0f);         // Top Left
+//        GL11.glVertex3f(1.0f, 0f, 0.0f);         // Top Right
+//        GL11.glVertex3f(1.0f, -1.0f, 0.0f);         // Bottom Right
+//        GL11.glVertex3f(-1.0f, -1.0f, 0.0f);         // Bottom Left
+//        GL11.glEnd();                                       // Done Drawing The Quad
+        
+        //Here, 64 pixels represent one unit in the game world. 
+        //Try loading Mud.bmp or Glass.bmp to see the effect.
+        float heightfactor = -128f / customTexture.getTextureHeight();
+        float widthfactor = 128f / customTexture.getTextureWidth();
+        customTexture.bind();
+        
+        GL11.glBegin(GL11.GL_POLYGON);
+        //Texture's X and Y coordinates are the same as those of the actual vertex, 
+        //only the first are multiplied by a set number.
+        GL11.glTexCoord2f(2f * widthfactor, 0f * heightfactor);
+        GL11.glVertex3f(2f, 0f, -2f);
+        GL11.glTexCoord2f(2f * widthfactor, 2f * heightfactor);
+        GL11.glVertex3f(2f, 2f, -2f);
+        GL11.glTexCoord2f(1f * widthfactor, 1.5f * heightfactor);
+        GL11.glVertex3f(1f, 1.5f, -2f);
+        GL11.glTexCoord2f(0f * widthfactor, 2f * heightfactor);
+        GL11.glVertex3f(0f, 2f, -2f);
+        GL11.glTexCoord2f(0.0f * widthfactor, 0.0f * heightfactor);
+        GL11.glVertex3f(0f, 0f, -2f);
+        GL11.glEnd();
 
-        GL11.glLoadIdentity();                          // Reset The Current Modelview Matrix
-        GL11.glTranslatef(1.5f, 0.0f, -6.0f);             // Move Right 1.5 Units And Into The Screen 6.0
-        GL11.glRotatef(rquad, 1.0f, 0.0f, 0.0f);               // Rotate The Quad On The X axis ( NEW )
-        GL11.glColor3f(0.5f, 0.5f, 1.0f);                 // Set The Color To Blue One Time Only
-        GL11.glBegin(GL11.GL_QUADS);                        // Draw A Quad
-        GL11.glVertex3f(-1.0f, 0f, 0.0f);         // Top Left
-        GL11.glVertex3f(1.0f, 0f, 0.0f);         // Top Right
-        GL11.glVertex3f(1.0f, -1.0f, 0.0f);         // Bottom Right
-        GL11.glVertex3f(-1.0f, -1.0f, 0.0f);         // Bottom Left
-        GL11.glEnd();                                       // Done Drawing The Quad
-
-        rtri += 10f;                                       // Increase The Rotation Variable For The Triangle ( NEW )
+//        rtri += 1f;                                       // Increase The Rotation Variable For The Triangle ( NEW )
         rquad -= 2f;                                 // Decrease The Rotation Variable For The Quad     ( NEW )
     }
     
@@ -178,9 +242,7 @@ public class Menu extends GameStateTemplate {
             //simple.xml, gui.xml, Eforen.xml and guiTheme.xml.
             //HOWEVER, of these, I could only get simple.xml to work properly. The others have weird xml
             //that is probably completely shit by anyone's standards.
-        } catch (LWJGLException ex) {
-            Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
         }
         
