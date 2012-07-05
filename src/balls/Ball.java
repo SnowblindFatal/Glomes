@@ -1,4 +1,4 @@
-package glomes;
+package balls;
 
 import java.io.FileInputStream;
 import org.lwjgl.util.glu.GLU;

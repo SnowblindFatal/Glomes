@@ -4,6 +4,8 @@
  */
 package glomes;
 
+import misc.My_Quaternion;
+import balls.Ball;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;

@@ -1,4 +1,4 @@
-package glomes;
+package misc;
 
 import org.lwjgl.util.vector.Quaternion;
 
