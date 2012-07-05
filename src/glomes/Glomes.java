@@ -8,6 +8,7 @@ import de.matthiasmann.twl.renderer.lwjgl.LWJGLRenderer;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import misc.LevelLoader;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
@@ -24,6 +25,7 @@ public class Glomes {
     private Menu menuState;
     private GameStateTemplate currentState;
     private int[] currentResolution;
+    private LevelLoader levelLoader;
     
     
     public Glomes(){
@@ -35,6 +37,9 @@ public class Glomes {
         //TODO: Load config file from which settings, such as screen resolution, fullscreen mode, vsync, anti-aliasing, keyboard configuration
         //and so on are loaded.
         initGL();
+        
+        loadLevels();
+        
         stateStack.push(menuState);
         stackHandler();
         
@@ -94,5 +99,14 @@ public class Glomes {
                 menuState.use();
                 break;
         }
+    }
+    
+    private void loadLevels(){
+        levelLoader = new LevelLoader();
+        levelLoader.loadLevel("cfg/leveldata/test level.level");
+        //TODO: make a loop that goes through all *.level files in the leveldata folder.
+       
+        
+        
     }
 }

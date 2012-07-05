@@ -14,7 +14,7 @@ public class Statics {
     public static final int FRAMERATE = 60, MENU_STATE = 0, GAME_STATE = 1;
     
     private static int DisplayWidth = 800, DisplayHeight = 600;
-
+    
     
     public static int getDisplayWidth() {
         return DisplayWidth;
