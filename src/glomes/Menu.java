@@ -65,7 +65,7 @@ public class Menu extends GameStateTemplate {
         triangles = new ArrayList();
         //Save this for now:
         try {
-            customTexture = TextureLoader.getTexture("BMP", ResourceLoader.getResourceAsStream("test/Mud.bmp"));
+            customTexture = TextureLoader.getTexture("BMP", ResourceLoader.getResourceAsStream("/res/test/Mud.bmp"));
         } catch (IOException ex) {
             Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
         }
