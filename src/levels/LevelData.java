@@ -14,9 +14,11 @@ public class LevelData {
     String title;
     int playerAmount, xSize, ySize;
     ArrayList<Wall> walls;
-    
+    ArrayList<PowerPlant> powerPlants;
+    ArrayList<Laboratory> laboratories;
+    ArrayList<float[]> playerPositions;
     public LevelData(){
-        
+        playerPositions = new ArrayList();
     }
     
     public void setTitle(String newTitle){
@@ -32,8 +34,17 @@ public class LevelData {
     public void setWalls(ArrayList<Wall> newWalls){
         walls = newWalls;
     }
+    public void setPowerPlants(ArrayList<PowerPlant> newPowerPlants){
+        powerPlants = newPowerPlants;
+    }
+    public void setLaboratories(ArrayList<Laboratory> newLaboratories){
+        laboratories = newLaboratories;
+    }
     public void printData(){
         System.out.println(xSize + title + playerAmount);
+    }
+    public void addPlayerPosition(float[] newPosition){
+        playerPositions.add(newPosition);
     }
     
 }

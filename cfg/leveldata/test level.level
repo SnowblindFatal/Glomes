@@ -1,6 +1,6 @@
 [GENERAL]
 title = The Crossing
-playerAmount = 4
+playerAmount = 2
 xSize= 300
 ySize= 100
 
@@ -20,19 +20,22 @@ vertice = (141.5, 20; 158.5, 20; 170, 70; 130, 70;)
 id= 0
 energy= 30
 vertice= (146, 10; 154,10; 154,20;146,20)
+modelLocation = (149, 13.5)
 
 
 [LABORATORY]
 id= 0
 tech=random_tower
+modelLocation = (11.2, 12.5)
 vertice= (10,10;   10  ,15   ;15,10)
 [LABORATORY]
 id=1
+modelLocation = (288, 288)
 tech=bomb
 vertice= (290,290;290,285;285,290)
 
 
 [PLAYER]
-position= 30,30
+position= (30,31)
 [PLAYER]
-position= 270,270
+position= (270,269)
