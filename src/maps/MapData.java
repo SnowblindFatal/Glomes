@@ -12,11 +12,15 @@ import java.util.ArrayList;
  */
 public class MapData {
     String title;
-    int playerAmount, xSize, ySize;
-    ArrayList<ObstacleData> obstaclesData;
-    ArrayList<PowerPlantData> powerPlantsData;
-    ArrayList<LaboratoryData> laboratoriesData;
+    private int playerAmount;
+    private int xSize;
+    private int ySize;
+    private ArrayList<ObstacleData> obstaclesData;
+    private ArrayList<PowerPlantData> powerPlantsData;
+    private ArrayList<LaboratoryData> laboratoriesData;
     ArrayList<float[]> playerPositions;
+    
+    
     public MapData(){
         playerPositions = new ArrayList();
     }
@@ -41,10 +45,30 @@ public class MapData {
         laboratoriesData = newLaboratories;
     }
     public void printData(){
-        System.out.println(xSize + title + playerAmount);
+        System.out.println(title);
     }
     public void addPlayerPosition(float[] newPosition){
         playerPositions.add(newPosition);
     }
-    
+    public String getTitle(){
+        return title;
+    }
+    public int getPlayerAmount() {
+        return playerAmount;
+    }
+    public int getXSize() {
+        return xSize;
+    }
+    public int getYSize() {
+        return ySize;
+    }
+    public ArrayList<ObstacleData> getObstaclesData() {
+        return obstaclesData;
+    }
+    public ArrayList<PowerPlantData> getPowerPlantsData() {
+        return powerPlantsData;
+    }
+    public ArrayList<LaboratoryData> getLaboratoriesData() {
+        return laboratoriesData;
+    }
 }
