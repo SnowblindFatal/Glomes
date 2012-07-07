@@ -1,1 +1,20 @@
-WHERE MAKING THIS HAPEN
+Currently requires the following libraries:
+
+LWJGL 
+-LightWeight Java Game Library. 
+See here for instructions for setting it up with your IDE (Same instructions apply to other libraries as well pretty much!): 
+http://www.lwjgl.org/wiki/index.php?title=Main_Page#Getting_started
+Download here:
+http://www.lwjgl.org/download.php
+
+Slick-Utils
+-An expansion to LWJGL. Get it here: 
+http://lwjgl.org/wiki/index.php?title=Slick-Util_Library_-_Introduction
+
+TWL
+-Themable Widget Library. Used for the UI. Get it here:
+http://twl.l33tlabs.org/
+
+ini4j
+-Library for reading config files. Get it here:
+http://ini4j.sourceforge.net/
