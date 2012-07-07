@@ -4,8 +4,11 @@ playerAmount = 2
 xSize= 300
 ySize= 100
 
-
-
+//commenting works too!
+// [OBSTACLE]
+// id = 1
+// material = metal
+// vertice = (0.5, 0.5; 0.5, 0.73; 0.22, 0.67;)
 [OBSTACLE]
 id = 0
 material = wood

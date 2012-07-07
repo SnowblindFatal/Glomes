@@ -9,7 +9,7 @@ package maps;
  * @author juho
  */
 public class Laboratory {
-    public Laboratory(LaboratoryData newLaboratoryData){
+    public Laboratory(LaboratoryData newLaboratoryData, GridSquare[][] newGrid){
         
     }
     

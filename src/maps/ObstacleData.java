@@ -11,12 +11,19 @@ import java.util.ArrayList;
  * @author juho
  */
 public class ObstacleData {
-    ArrayList<float[]> vertice;
-    String theme;
-    public ObstacleData(ArrayList<float[]> newVertice, String newTheme){
+    private ArrayList<float[]> vertice;
+    private String material;
+    public ObstacleData(ArrayList<float[]> newVertice, String newMaterial){
         vertice = newVertice;
-        theme = newTheme;
-        
+        material = newMaterial;
+    }
+
+    public ArrayList<float[]> getVertice() {
+        return vertice;
+    }
+
+    public String getMaterial() {
+        return material;
     }
     
 }

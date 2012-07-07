@@ -9,7 +9,7 @@ package maps;
  * @author juho
  */
 public class PowerPlant {
-    public PowerPlant(PowerPlantData newPowerPlantData){
+    public PowerPlant(PowerPlantData newPowerPlantData, GridSquare[][] newGrid){
         
     }
     

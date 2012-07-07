@@ -120,7 +120,7 @@ public class MapLoader {
         float[] position;
         for (int i = 0; i < sectionList.size(); i++) {
             position = parseVertice(sectionList.get(i).get("position"));
-            System.out.println(position[0] + ", " + position[1]);
+//            System.out.println(position[0] + ", " + position[1]);
             mapData.addPlayerPosition(position);
         }
     }
