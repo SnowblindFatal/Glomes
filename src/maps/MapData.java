@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package levels;
+package maps;
 
 import java.util.ArrayList;
 
@@ -10,14 +10,14 @@ import java.util.ArrayList;
  *
  * @author juho
  */
-public class LevelData {
+public class MapData {
     String title;
     int playerAmount, xSize, ySize;
-    ArrayList<Wall> walls;
-    ArrayList<PowerPlant> powerPlants;
-    ArrayList<Laboratory> laboratories;
+    ArrayList<ObstacleData> obstaclesData;
+    ArrayList<PowerPlantData> powerPlantsData;
+    ArrayList<LaboratoryData> laboratoriesData;
     ArrayList<float[]> playerPositions;
-    public LevelData(){
+    public MapData(){
         playerPositions = new ArrayList();
     }
     
@@ -31,14 +31,14 @@ public class LevelData {
         xSize = x;
         ySize = y;
     }
-    public void setWalls(ArrayList<Wall> newWalls){
-        walls = newWalls;
+    public void setWalls(ArrayList<ObstacleData> newObstacles){
+        obstaclesData = newObstacles;
     }
-    public void setPowerPlants(ArrayList<PowerPlant> newPowerPlants){
-        powerPlants = newPowerPlants;
+    public void setPowerPlants(ArrayList<PowerPlantData> newPowerPlants){
+        powerPlantsData = newPowerPlants;
     }
-    public void setLaboratories(ArrayList<Laboratory> newLaboratories){
-        laboratories = newLaboratories;
+    public void setLaboratories(ArrayList<LaboratoryData> newLaboratories){
+        laboratoriesData = newLaboratories;
     }
     public void printData(){
         System.out.println(xSize + title + playerAmount);

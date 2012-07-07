@@ -10,10 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import levels.Laboratory;
-import levels.LevelData;
-import levels.PowerPlant;
-import levels.Wall;
+import maps.LaboratoryData;
+import maps.MapData;
+import maps.PowerPlantData;
+import maps.ObstacleData;
 import org.ini4j.Profile.Section;
 import org.ini4j.Wini;
 
@@ -21,18 +21,19 @@ import org.ini4j.Wini;
  *
  * @author juho
  */
-public class LevelLoader {
+public class MapLoader {
     Wini iniReader;
-    LevelData levelData;
+    MapData mapData;
     
     
     
-    public LevelData loadLevel(String fileName){
-        levelData = new LevelData();
+    public MapData loadMap(String fileName){
+        mapData = new MapData();
+        File file = new File(fileName);
         try {
             iniReader = new Wini();
             iniReader.getConfig().setMultiSection(true);
-            iniReader.load(new File(fileName));
+            iniReader.load(file);
             
             
             handleGeneral();
@@ -43,10 +44,10 @@ public class LevelLoader {
             
             
         } catch (IOException ex) {
-            Logger.getLogger(LevelLoader.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MapLoader.class.getName()).log(Level.SEVERE, null, ex);
         }
-//        levelData.printData();
-        return levelData;
+//        mapData.printData();
+        return mapData;
     }
     
     
@@ -55,26 +56,26 @@ public class LevelLoader {
     
     private void handleGeneral(){
         Section section = iniReader.get("GENERAL");
-        levelData.setTitle(section.get("title"));
-        levelData.setPlayerAmount(Integer.parseInt(section.get("playerAmount")));
-        levelData.setSize(Integer.parseInt(section.get("xSize")), Integer.parseInt(section.get("ySize")));
+        mapData.setTitle(section.get("title"));
+        mapData.setPlayerAmount(Integer.parseInt(section.get("playerAmount")));
+        mapData.setSize(Integer.parseInt(section.get("xSize")), Integer.parseInt(section.get("ySize")));
         
     }
     
     
     private void handleWalls(){
-        List<Section> sectionList = iniReader.getAll("WALL");
+        List<Section> sectionList = iniReader.getAll("OBSTACLE");
         String theme;
         ArrayList<float[]> verticeList;
-        ArrayList<Wall> wallList = new ArrayList();
-        Wall wall;
+        ArrayList<ObstacleData> wallList = new ArrayList();
+        ObstacleData wall;
         for (int i = 0; i < sectionList.size(); i++){
             verticeList = parseVerticeArray(sectionList.get(i).get("vertice"));
             theme = sectionList.get(i).get("theme");
-            wall = new Wall(verticeList, theme);
+            wall = new ObstacleData(verticeList, theme);
             wallList.add(wall);
         }
-        levelData.setWalls(wallList);
+        mapData.setWalls(wallList);
     }
     
     
@@ -83,16 +84,16 @@ public class LevelLoader {
         float[] position;
         int energy;
         ArrayList<float[]> verticeList;
-        PowerPlant powerPlant;
-        ArrayList<PowerPlant> powerPlantList = new ArrayList();
+        PowerPlantData powerPlant;
+        ArrayList<PowerPlantData> powerPlantList = new ArrayList();
         for (int i = 0; i < sectionList.size(); i++) {
             verticeList = parseVerticeArray(sectionList.get(i).get("vertice"));
             position = parseVertice(sectionList.get(i).get("modelLocation"));
             energy = Integer.parseInt(sectionList.get(i).get("energy"));
-            powerPlant = new PowerPlant(verticeList, position, energy);
+            powerPlant = new PowerPlantData(verticeList, position, energy);
             powerPlantList.add(powerPlant);
         }
-        levelData.setPowerPlants(powerPlantList);
+        mapData.setPowerPlants(powerPlantList);
     }
     
     
@@ -101,16 +102,16 @@ public class LevelLoader {
         float[] position;
         String tech;
         ArrayList<float[]> verticeList;
-        Laboratory laboratory;
-        ArrayList<Laboratory> laboratoryList = new ArrayList();
+        LaboratoryData laboratory;
+        ArrayList<LaboratoryData> laboratoryList = new ArrayList();
         for (int i = 0; i < sectionList.size(); i++) {
             verticeList = parseVerticeArray(sectionList.get(i).get("vertice"));
             position = parseVertice(sectionList.get(i).get("modelLocation"));
             tech = sectionList.get(i).get("tech");
-            laboratory = new Laboratory(verticeList, position, tech);
+            laboratory = new LaboratoryData(verticeList, position, tech);
             laboratoryList.add(laboratory);
         }
-        levelData.setLaboratories(laboratoryList);
+        mapData.setLaboratories(laboratoryList);
     }
     
     
@@ -120,7 +121,7 @@ public class LevelLoader {
         for (int i = 0; i < sectionList.size(); i++) {
             position = parseVertice(sectionList.get(i).get("position"));
             System.out.println(position[0] + ", " + position[1]);
-            levelData.addPlayerPosition(position);
+            mapData.addPlayerPosition(position);
         }
     }
     

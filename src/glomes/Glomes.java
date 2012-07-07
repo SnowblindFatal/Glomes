@@ -5,10 +5,11 @@
 package glomes;
 
 import de.matthiasmann.twl.renderer.lwjgl.LWJGLRenderer;
+import java.util.ArrayList;
 import java.util.Stack;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import misc.LevelLoader;
+import maps.Map;
+import maps.MapData;
+import misc.MapLoader;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
@@ -25,7 +26,9 @@ public class Glomes {
     private Menu menuState;
     private GameStateTemplate currentState;
     private int[] currentResolution;
-    private LevelLoader levelLoader;
+    
+    private MapData mapData;
+    private ArrayList<Map> maps;
     
     
     public Glomes(){
@@ -38,7 +41,7 @@ public class Glomes {
         //and so on are loaded.
         initGL();
         
-        loadLevels();
+        loadMaps();
         
         stateStack.push(menuState);
         stackHandler();
@@ -101,10 +104,15 @@ public class Glomes {
         }
     }
     
-    private void loadLevels(){
-        levelLoader = new LevelLoader();
-        levelLoader.loadLevel("cfg/leveldata/test level.level");
-        //TODO: make a loop that goes through all *.level files in the leveldata folder.
+    private void loadMaps(){
+        maps = new ArrayList();
+        MapLoader mapLoader = new MapLoader();
+        Map newMap;
+        
+        mapData = mapLoader.loadMap("cfg/mapdata/test map.umf");
+        newMap = new Map(mapData);
+        maps.add(newMap);
+        //TODO: make a loop that goes through all *.map files in the mapdata folder.
        
         
         

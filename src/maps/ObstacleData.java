@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package levels;
+package maps;
 
 import java.util.ArrayList;
 
@@ -10,10 +10,10 @@ import java.util.ArrayList;
  *
  * @author juho
  */
-public class Wall {
+public class ObstacleData {
     ArrayList<float[]> vertice;
     String theme;
-    public Wall(ArrayList<float[]> newVertice, String newTheme){
+    public ObstacleData(ArrayList<float[]> newVertice, String newTheme){
         vertice = newVertice;
         theme = newTheme;
         

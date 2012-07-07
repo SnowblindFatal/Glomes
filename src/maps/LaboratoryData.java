@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package levels;
+package maps;
 
 import java.util.ArrayList;
 
@@ -10,12 +10,12 @@ import java.util.ArrayList;
  *
  * @author juho
  */
-public class Laboratory {
+public class LaboratoryData {
     float[] modelPosition;
     String techToPick;
     ArrayList<float[]> verticeList;
 
-    public Laboratory(ArrayList<float[]> newVertice, float[] newModelPosition, String pickableTech) {
+    public LaboratoryData(ArrayList<float[]> newVertice, float[] newModelPosition, String pickableTech) {
         verticeList = newVertice;
         techToPick = pickableTech;
         modelPosition = newModelPosition;

@@ -6,11 +6,11 @@ ySize= 100
 
 
 
-[WALL]
+[OBSTACLE]
 id = 0
 material = wood
 vertice = (0, 0; 300, 0; 300, 100; 0, 100; 0, 10; 10, 10; 10, 90; 290, 90; 290, 10; 0, 10)
-[WALL]
+[OBSTACLE]
 id = 1
 material = metal
 vertice = (141.5, 20; 158.5, 20; 170, 70; 130, 70;)
