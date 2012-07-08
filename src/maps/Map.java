@@ -69,4 +69,10 @@ public class Map {
             laboratories.add(newLaboratory);
         }
     }
+    
+    public void draw(){
+        for (Obstacle obstacle : obstacles){
+            obstacle.draw();
+        }
+    }
 }

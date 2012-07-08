@@ -4,30 +4,50 @@
  */
 package maps;
 
+import glomes.Statics;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.lwjgl.opengl.GL11;
+import org.newdawn.slick.opengl.Texture;
+import org.newdawn.slick.opengl.TextureLoader;
+import org.newdawn.slick.util.ResourceLoader;
 
 /**
  *
  * @author juho
  */
 public class Wall {
-    String material;
-    float xCoordinate1, yCoordinate1, xCoordinate2, yCoordinate2;
-    LinkedList<GridSquare> squaresOccupied;
+    private String material;
+    private float xCoordinate1, yCoordinate1, xCoordinate2, yCoordinate2, length, vectorX, vectorY, normalX, normalY, normalZ;
+    private LinkedList<GridSquare> squaresOccupied;
     private GridSquare[][] grid;
+    private int displayListIndex;
+    private Texture wallTexture;
     
-    public Wall(float x1, float y1, float x2, float y2, String newMaterial, GridSquare[][] newGrid){
+    public Wall(float x1, float y1, float x2, float y2, String newMaterial, GridSquare[][] newGrid, int newDisplayListIndex){
+        displayListIndex = newDisplayListIndex;
         squaresOccupied = new LinkedList();
         xCoordinate1 = x1;
         yCoordinate1 = y1;
         xCoordinate2 = x2;
         yCoordinate2 = y2;
         
+        vectorX = xCoordinate2 - xCoordinate1;
+        vectorY = yCoordinate2 - yCoordinate1;
+        length = (float) (Math.sqrt(vectorY * vectorY + vectorX * vectorX));
+        
         material = newMaterial;
         grid = newGrid;
         occupyGrid();
+        generateNormal();
+        try {
+            wallTexture = TextureLoader.getTexture("BMP", ResourceLoader.getResourceAsStream("/res/test/Mud.bmp"));
+        } catch (IOException ex) {
+            Logger.getLogger(Wall.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        generateDisplayList();
     }
     private void occupyGrid(){
         //Tell all squares this wall intersects with to add the wall to collision checks.
@@ -126,10 +146,62 @@ public class Wall {
         squaresOccupied.add(grid[x][y]);
     }
     
+    private void generateDisplayList(){
+        GL11.glNewList(displayListIndex, GL11.GL_COMPILE); // Start With The List.
+        GL11.glBegin(GL11.GL_QUADS);
+        GL11.glNormal3f(normalX, normalY, normalZ);
+        
+        GL11.glTexCoord2f(0.0f, 1.0f);
+        GL11.glVertex3f(xCoordinate1, yCoordinate1, Statics.FLOOR_HEIGHT);
+        
+        GL11.glTexCoord2f(0.0f, 0.0f);
+        GL11.glVertex3f(xCoordinate1, yCoordinate1, Statics.WALL_HEIGHT);
+        
+        GL11.glTexCoord2f(1.0f, 0.0f);
+        GL11.glVertex3f(xCoordinate2, yCoordinate2, Statics.WALL_HEIGHT);
+        
+        GL11.glTexCoord2f(1.0f, 1.0f);
+        GL11.glVertex3f(xCoordinate2, yCoordinate2, Statics.FLOOR_HEIGHT);
+        
+        GL11.glEnd();
+        GL11.glEndList();
+    }
+    
+    private void generateNormal(){
+        //Important: If the vertice of an obstacle have been defined in a clockwise pattern, the 
+        //normals generated here will point to the wrong way.
+        
+        //The Z component of the first vector is zero, and the X and Y components of the second vector are zero.
+        
+        
+//        float vector2Z = 1f;
+        
+        normalX = vectorY / length;
+        normalY = -vectorX / length;
+        normalZ = 0f;
+        System.out.println(vectorX + ", " + vectorY + "; normal: " + normalX + ", " + normalY + ".");
+        
+        /*
+         * Begin Function CalculateSurfaceNormal (Input Triangle) Returns Vector
+         *
+         * Set Vector U to (Triangle.p2 minus Triangle.p1) Set Vector V to
+         * (Triangle.p3 minus Triangle.p1)
+         *
+         * Set Normal.x to (multiply U.y by V.z) minus (multiply U.z by V.y) Set
+         * Normal.y to (multiply U.z by V.x) minus (multiply U.x by V.z) Set
+         * Normal.z to (multiply U.x by V.y) minus (multiply U.y by V.x)
+         *
+         * Returning Normal
+         *
+         * End Function
+         */
+    }
+    
     
     
     public void draw(){
-        
+        wallTexture.bind();
+        GL11.glCallList(displayListIndex);
     }
     
     public void remove(){

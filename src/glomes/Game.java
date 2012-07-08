@@ -20,6 +20,8 @@ public class Game extends GameStateTemplate {
     Ball ball;
     float mouseX, mouseY;
     int speed = 0;
+    
+    private float cameraX, cameraY;
 
     public Game(Glomes mainGame){
         super(mainGame);
@@ -27,6 +29,9 @@ public class Game extends GameStateTemplate {
     
     @Override
     public void use(){
+        cameraX = 0f;
+        cameraY = 0f;
+        
         System.out.println("moved to game");
         while (quitBoolean == false){
             input();            
@@ -53,6 +58,18 @@ public class Game extends GameStateTemplate {
             System.out.println("Speed: " + speed);
             speed = 0;
         }
+        if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)){
+            cameraX -= 1.1f;
+        }
+        if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
+            cameraX += 1.1f;
+        }
+        if (Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
+            cameraY -= 1.1f;
+        }
+        if (Keyboard.isKeyDown(Keyboard.KEY_UP)) {
+            cameraY += 1.1f;
+        }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) quitBoolean = true;
 
@@ -62,6 +79,12 @@ public class Game extends GameStateTemplate {
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
         if (ball != null)
             if (!ball.update()) ball = null;
+        
+        GL11.glLoadIdentity();                          // Reset The Current Modelview Matrix
+        GL11.glRotatef(0.0f, 0.0f, 0.0f, 0.0f);
+        GL11.glTranslatef(cameraX, cameraY, -100.0f);
+        game.getMap().draw();
+        
         Display.update();
     }
 }

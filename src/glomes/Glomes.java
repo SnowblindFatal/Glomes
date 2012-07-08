@@ -77,7 +77,7 @@ public class Glomes {
                 45.0f,
                 (float) currentResolution[0] / (float) currentResolution[1],
                 0.1f,
-                100.0f);
+                1000.0f);
         GL11.glMatrixMode(GL11.GL_MODELVIEW); // Select The Modelview Matrix
 
         // Really Nice Perspective Calculations
@@ -112,9 +112,9 @@ public class Glomes {
         mapData = mapLoader.loadMap("cfg/mapdata/test map.umf");
         newMap = new Map(mapData);
         maps.add(newMap);
-        //TODO: make a loop that goes through all *.map files in the mapdata folder.
-       
-        
-        
+        //TODO: make a loop that goes through all *.umf (ultimate map format) files in the mapdata folder.
+    }
+    public Map getMap(){
+        return maps.get(0);
     }
 }
