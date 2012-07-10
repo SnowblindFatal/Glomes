@@ -7,7 +7,6 @@ package maps;
 import glomes.Statics;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
@@ -21,6 +20,11 @@ import org.poly2tri.geometry.polygon.Polygon;
 import org.poly2tri.geometry.polygon.PolygonPoint;
 import org.poly2tri.triangulation.TriangulationPoint;
 import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
+
+//import org.lwjgl.util.glu.GLUtessellator;
+//import org.lwjgl.util.glu.GLUtessellatorCallback;
+//import org.lwjgl.util.glu.GLUtessellatorCallbackAdapter;
+//import org.lwjgl.util.glu.tessellation.GLUtessellatorImpl;
 
 
 /**
@@ -79,7 +83,7 @@ public class Obstacle {
 
         createTop();
     }
-
+    
     private void createTop(){
         try {
             //TODO: create dynamic texture loading. ie. load the texture associated with the material.
@@ -129,3 +133,75 @@ public class Obstacle {
     }
     
 }
+
+
+
+
+
+
+//    private void createTopGLUTESSELATOR(){
+//        try {
+//            //TODO: create dynamic texture loading. ie. load the texture associated with the material.
+//            topTexture = TextureLoader.getTexture("BMP", ResourceLoader.getResourceAsStream("/res/test/Crate.bmp"));
+//        } catch (IOException ex) {
+//            Logger.getLogger(Obstacle.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        float heightFactor = Statics.getTextureFactor(topTexture.getTextureHeight());
+//        float widthFactor = Statics.getTextureFactor(topTexture.getTextureWidth());
+//        
+//        
+//        double[][] drawVertice = new double[vertice.size()][3];
+//        for (int i = 0; i < vertice.size(); i++) {
+//            drawVertice[i] = new double[] {vertice.get(i)[0], vertice.get(i)[1] , Statics.WALL_HEIGHT};
+//        }
+//        
+//        
+//        GLUtessellator tesser = new GLUtessellatorImpl();
+//        GLUtessellatorCallback callBacker = new GLUtessellatorCallbackAdapter();
+//        
+//        
+////        gluTessCallback(tobj, GLU_TESS_VERTEX,
+////                (GLvoid( *) 
+////        ()) &vertexCallback
+////        );
+////   gluTessCallback(tobj, GLU_TESS_BEGIN,
+////                (GLvoid( *) 
+////        ()) &beginCallback
+////        );
+////   gluTessCallback(tobj, GLU_TESS_END,
+////                (GLvoid( *) 
+////        ()) &endCallback
+////        );
+////   gluTessCallback(tobj, GLU_TESS_ERROR,
+////                (GLvoid( *) 
+////        ()) &errorCallback
+////        );
+////   gluTessCallback(tobj, GLU_TESS_COMBINE,
+////                (GLvoid( *) 
+////        ()) &combineCallback
+////        );
+//        
+//        
+//        GL11.glNewList(displayListIndex, GL11.GL_COMPILE);
+//        
+//        
+////        GL11.glShadeModel(GL_SMOOTH);
+////        tesser.gluTessProperty(GLU_TESS_WINDING_RULE, GLU_TESS_WINDING_POSITIVE);
+////        gluTessProperty(tobj, GLU_TESS_WINDING_RULE,
+////                GLU_TESS_WINDING_POSITIVE);
+//        
+//        tesser.gluBeginPolygon();
+//        tesser.gluTessNormal(0f, 0f, 1f);
+//        
+//        
+//        tesser.gluTessBeginContour();
+//        for (int i = 0; i < vertice.size(); i++) {
+//            tesser.gluTessVertex(drawVertice[i], 0, vertice);
+//        }
+//        tesser.gluTessEndContour();
+//        
+//        tesser.gluEndPolygon();
+//        GL11.glEndList();
+//        
+//        
+//    }
