@@ -8,23 +8,13 @@ import glomes.Statics;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import misc.HelperFunctions;
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
-import org.poly2tri.Poly2Tri;
-import org.poly2tri.geometry.polygon.Polygon;
-import org.poly2tri.geometry.polygon.PolygonPoint;
-import org.poly2tri.triangulation.TriangulationPoint;
-import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
-
-//import org.lwjgl.util.glu.GLUtessellator;
-//import org.lwjgl.util.glu.GLUtessellatorCallback;
-//import org.lwjgl.util.glu.GLUtessellatorCallbackAdapter;
-//import org.lwjgl.util.glu.tessellation.GLUtessellatorImpl;
 
 
 /**
@@ -91,55 +81,17 @@ public class Obstacle {
         } catch (IOException ex) {
             Logger.getLogger(Obstacle.class.getName()).log(Level.SEVERE, null, ex);
         }
-        float heightFactor = Statics.getTextureFactor(topTexture.getTextureHeight());
-        float widthFactor = Statics.getTextureFactor(topTexture.getTextureWidth());
-        
-        
-        PolygonPoint[] points = new PolygonPoint[vertice.size()];
+        double heightFactor = Statics.getTextureFactor(topTexture.getTextureHeight());
+        double widthFactor = Statics.getTextureFactor(topTexture.getTextureWidth());
+        double[][] drawVertice = new double[vertice.size()][3];
         for (int i = 0; i < vertice.size(); i++) {
-            points[i] = new PolygonPoint(vertice.get(i)[0], vertice.get(i)[1]);
+            drawVertice[i] = new double[] {vertice.get(i)[0], vertice.get(i)[1] ,Statics.WALL_HEIGHT};
         }
-        Polygon topPolygon = new Polygon(points);
-        Poly2Tri.triangulate(topPolygon);
-        List<DelaunayTriangle> triangles = topPolygon.getTriangles();
-        TriangulationPoint[] newPoint;
-        
-        
-        
-        GL11.glNewList(displayListIndex, GL11.GL_COMPILE); // Start With The List.
-        GL11.glNormal3f(0f, 0f, 1f);
-        float x, y;
-        //Iterate through all triangles and draw the corresponding GL shapes.
-        for (int i = 0; i < triangles.size(); i++) {
-            newPoint = triangles.get(i).points;
-            GL11.glBegin(GL11.GL_TRIANGLES);
-            for (int j = 0; j < newPoint.length; j++) {
-                x = (float) newPoint[j].getXf();
-                y = (float) newPoint[j].getYf();
-                GL11.glTexCoord2f(x * widthFactor, -y * heightFactor);
-                GL11.glVertex3f(x, y, Statics.WALL_HEIGHT);
-            }
-            GL11.glEnd();
-        }
-        GL11.glEndList();
+        HelperFunctions.tesselatePolygon(drawVertice, widthFactor, heightFactor, displayListIndex);
     }
+
     
-    public void draw(){
-        for (Wall wall : walls){
-            wall.draw();
-        }
-        topTexture.bind();
-        GL11.glCallList(displayListIndex);
-    }
-    
-}
-
-
-
-
-
-
-//    private void createTopGLUTESSELATOR(){
+//    private void createTopOLD(){
 //        try {
 //            //TODO: create dynamic texture loading. ie. load the texture associated with the material.
 //            topTexture = TextureLoader.getTexture("BMP", ResourceLoader.getResourceAsStream("/res/test/Crate.bmp"));
@@ -150,58 +102,41 @@ public class Obstacle {
 //        float widthFactor = Statics.getTextureFactor(topTexture.getTextureWidth());
 //        
 //        
-//        double[][] drawVertice = new double[vertice.size()][3];
+//        PolygonPoint[] points = new PolygonPoint[vertice.size()];
 //        for (int i = 0; i < vertice.size(); i++) {
-//            drawVertice[i] = new double[] {vertice.get(i)[0], vertice.get(i)[1] , Statics.WALL_HEIGHT};
+//            points[i] = new PolygonPoint(vertice.get(i)[0], vertice.get(i)[1]);
 //        }
+//        Polygon topPolygon = new Polygon(points);
+//        Poly2Tri.triangulate(topPolygon);
+//        List<DelaunayTriangle> triangles = topPolygon.getTriangles();
+//        TriangulationPoint[] newPoint;
 //        
 //        
-//        GLUtessellator tesser = new GLUtessellatorImpl();
-//        GLUtessellatorCallback callBacker = new GLUtessellatorCallbackAdapter();
 //        
-//        
-////        gluTessCallback(tobj, GLU_TESS_VERTEX,
-////                (GLvoid( *) 
-////        ()) &vertexCallback
-////        );
-////   gluTessCallback(tobj, GLU_TESS_BEGIN,
-////                (GLvoid( *) 
-////        ()) &beginCallback
-////        );
-////   gluTessCallback(tobj, GLU_TESS_END,
-////                (GLvoid( *) 
-////        ()) &endCallback
-////        );
-////   gluTessCallback(tobj, GLU_TESS_ERROR,
-////                (GLvoid( *) 
-////        ()) &errorCallback
-////        );
-////   gluTessCallback(tobj, GLU_TESS_COMBINE,
-////                (GLvoid( *) 
-////        ()) &combineCallback
-////        );
-//        
-//        
-//        GL11.glNewList(displayListIndex, GL11.GL_COMPILE);
-//        
-//        
-////        GL11.glShadeModel(GL_SMOOTH);
-////        tesser.gluTessProperty(GLU_TESS_WINDING_RULE, GLU_TESS_WINDING_POSITIVE);
-////        gluTessProperty(tobj, GLU_TESS_WINDING_RULE,
-////                GLU_TESS_WINDING_POSITIVE);
-//        
-//        tesser.gluBeginPolygon();
-//        tesser.gluTessNormal(0f, 0f, 1f);
-//        
-//        
-//        tesser.gluTessBeginContour();
-//        for (int i = 0; i < vertice.size(); i++) {
-//            tesser.gluTessVertex(drawVertice[i], 0, vertice);
+//        GL11.glNewList(displayListIndex, GL11.GL_COMPILE); // Start With The List.
+//        GL11.glNormal3f(0f, 0f, 1f);
+//        float x, y;
+//        //Iterate through all triangles and draw the corresponding GL shapes.
+//        for (int i = 0; i < triangles.size(); i++) {
+//            newPoint = triangles.get(i).points;
+//            GL11.glBegin(GL11.GL_TRIANGLES);
+//            for (int j = 0; j < newPoint.length; j++) {
+//                x = (float) newPoint[j].getXf();
+//                y = (float) newPoint[j].getYf();
+//                GL11.glTexCoord2f(x * widthFactor, -y * heightFactor);
+//                GL11.glVertex3f(x, y, Statics.WALL_HEIGHT);
+//            }
+//            GL11.glEnd();
 //        }
-//        tesser.gluTessEndContour();
-//        
-//        tesser.gluEndPolygon();
 //        GL11.glEndList();
-//        
-//        
 //    }
+    
+    public void draw(){
+        for (Wall wall : walls){
+            wall.draw();
+        }
+        topTexture.bind();
+        GL11.glCallList(displayListIndex);
+    }
+    
+}

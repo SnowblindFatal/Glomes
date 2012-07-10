@@ -13,12 +13,8 @@ ySize= 100
 [OBSTACLE]
 id = 0
 material = wood
-vertice = (300, 10; 300, 100; 0, 100; 0, 10; 10, 10; 10, 90; 290, 90; 290, 10)
+vertice = (0, 0; 300, 0; 300, 100; 0, 100; 0, 10; 10, 10; 10, 90; 290, 90; 290, 10; 0, 10)
 
-[OBSTACLE]
-id = 0
-material = wood
-vertice = (0, 0; 300, 0; 300, 10; 0, 10)
 
 //[OBSTACLE]
 //id = 1
