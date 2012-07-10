@@ -15,6 +15,7 @@ public class Statics {
     public static final float FLOOR_HEIGHT = 0f, WALL_HEIGHT  = 20f;
     
     private static int DisplayWidth = 800, DisplayHeight = 600;
+    private static float pixelsPerUnit = 32f;
     
     
     
@@ -30,6 +31,10 @@ public class Statics {
     }
     public static int[] getResolution() {
         return new int[] {DisplayWidth, DisplayHeight};
+    }
+    
+    public static float getTextureFactor(int textureDimension){
+        return pixelsPerUnit / (float)textureDimension;
     }
     
 }

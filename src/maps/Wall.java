@@ -20,13 +20,15 @@ import org.newdawn.slick.util.ResourceLoader;
  */
 public class Wall {
     private String material;
-    private float xCoordinate1, yCoordinate1, xCoordinate2, yCoordinate2, length, vectorX, vectorY, normalX, normalY, normalZ;
+    private float xCoordinate1, yCoordinate1, xCoordinate2, yCoordinate2, length, vectorX, vectorY, normalX, normalY, normalZ, textureOffset;
     private LinkedList<GridSquare> squaresOccupied;
     private GridSquare[][] grid;
     private int displayListIndex;
     private Texture wallTexture;
     
     public Wall(float x1, float y1, float x2, float y2, String newMaterial, GridSquare[][] newGrid, int newDisplayListIndex){
+        textureOffset = 0f; //Do something meaningful with this in the future!
+        
         displayListIndex = newDisplayListIndex;
         squaresOccupied = new LinkedList();
         xCoordinate1 = x1;
@@ -42,11 +44,6 @@ public class Wall {
         grid = newGrid;
         occupyGrid();
         generateNormal();
-        try {
-            wallTexture = TextureLoader.getTexture("BMP", ResourceLoader.getResourceAsStream("/res/test/Mud.bmp"));
-        } catch (IOException ex) {
-            Logger.getLogger(Wall.class.getName()).log(Level.SEVERE, null, ex);
-        }
         generateDisplayList();
     }
     private void occupyGrid(){
@@ -147,21 +144,51 @@ public class Wall {
     }
     
     private void generateDisplayList(){
+        
+        try {
+            wallTexture = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("/res/test/wall_tiles_013.png"));
+        } catch (IOException ex) {
+            Logger.getLogger(Wall.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        float heightFactor = Statics.getTextureFactor(wallTexture.getTextureHeight());
+        float widthFactor = Statics.getTextureFactor(wallTexture.getTextureWidth());
+        
         GL11.glNewList(displayListIndex, GL11.GL_COMPILE); // Start With The List.
         GL11.glBegin(GL11.GL_QUADS);
         GL11.glNormal3f(normalX, normalY, normalZ);
         
-        GL11.glTexCoord2f(0.0f, 1.0f);
-        GL11.glVertex3f(xCoordinate1, yCoordinate1, Statics.FLOOR_HEIGHT);
+        GL11.glTexCoord2f(
+                (0f + textureOffset) * widthFactor, 
+                -Statics.FLOOR_HEIGHT * heightFactor);
+        GL11.glVertex3f(
+                xCoordinate1, 
+                yCoordinate1, 
+                Statics.FLOOR_HEIGHT);
         
-        GL11.glTexCoord2f(0.0f, 0.0f);
-        GL11.glVertex3f(xCoordinate1, yCoordinate1, Statics.WALL_HEIGHT);
+        GL11.glTexCoord2f(
+                (0f + textureOffset) * widthFactor, 
+                -Statics.WALL_HEIGHT * heightFactor);
+        GL11.glVertex3f(
+                xCoordinate1, 
+                yCoordinate1, 
+                Statics.WALL_HEIGHT);
         
-        GL11.glTexCoord2f(1.0f, 0.0f);
-        GL11.glVertex3f(xCoordinate2, yCoordinate2, Statics.WALL_HEIGHT);
+        GL11.glTexCoord2f(
+                (length + textureOffset) * widthFactor, 
+                -Statics.WALL_HEIGHT * heightFactor);
+        GL11.glVertex3f(
+                xCoordinate2, 
+                yCoordinate2, 
+                Statics.WALL_HEIGHT);
         
-        GL11.glTexCoord2f(1.0f, 1.0f);
-        GL11.glVertex3f(xCoordinate2, yCoordinate2, Statics.FLOOR_HEIGHT);
+        GL11.glTexCoord2f(
+                (length + textureOffset) * widthFactor, 
+                -Statics.FLOOR_HEIGHT * heightFactor);
+        GL11.glVertex3f(
+                xCoordinate2, 
+                yCoordinate2, 
+                Statics.FLOOR_HEIGHT);
         
         GL11.glEnd();
         GL11.glEndList();
@@ -179,7 +206,7 @@ public class Wall {
         normalX = vectorY / length;
         normalY = -vectorX / length;
         normalZ = 0f;
-        System.out.println(vectorX + ", " + vectorY + "; normal: " + normalX + ", " + normalY + ".");
+//        System.out.println(vectorX + ", " + vectorY + "; normal: " + normalX + ", " + normalY + ".");
         
         /*
          * Begin Function CalculateSurfaceNormal (Input Triangle) Returns Vector

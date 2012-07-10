@@ -21,7 +21,7 @@ public class Game extends GameStateTemplate {
     float mouseX, mouseY;
     int speed = 0;
     
-    private float cameraX, cameraY;
+    private float cameraX, cameraY, cameraZ;
 
     public Game(Glomes mainGame){
         super(mainGame);
@@ -31,6 +31,7 @@ public class Game extends GameStateTemplate {
     public void use(){
         cameraX = 0f;
         cameraY = 0f;
+        cameraZ = -60f;
         
         System.out.println("moved to game");
         while (quitBoolean == false){
@@ -59,19 +60,29 @@ public class Game extends GameStateTemplate {
             speed = 0;
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)){
-            cameraX -= 1.1f;
-        }
-        if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
             cameraX += 1.1f;
         }
-        if (Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
-            cameraY -= 1.1f;
+        if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
+            cameraX -= 1.1f;
         }
-        if (Keyboard.isKeyDown(Keyboard.KEY_UP)) {
+        if (Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
             cameraY += 1.1f;
         }
+        if (Keyboard.isKeyDown(Keyboard.KEY_UP)) {
+            cameraY -= 1.1f;
+        }
+        
+        //Page up and down:
+        if (Keyboard.isKeyDown(Keyboard.KEY_NEXT)) {
+            cameraZ -= 1.1f;
+        }
+        if (Keyboard.isKeyDown(Keyboard.KEY_PRIOR)) {
+            cameraZ += 1.1f;
+        }
 
-        if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) quitBoolean = true;
+        if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)){
+            quitBoolean = true;
+        }
 
     }
 
@@ -82,7 +93,7 @@ public class Game extends GameStateTemplate {
         
         GL11.glLoadIdentity();                          // Reset The Current Modelview Matrix
         GL11.glRotatef(0.0f, 0.0f, 0.0f, 0.0f);
-        GL11.glTranslatef(cameraX, cameraY, -100.0f);
+        GL11.glTranslatef(cameraX, cameraY, cameraZ);
         game.getMap().draw();
         
         Display.update();
