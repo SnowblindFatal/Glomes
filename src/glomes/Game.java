@@ -51,10 +51,10 @@ public class Game extends GameStateTemplate {
             mouseY = (Mouse.getY() - Display.getHeight() / 2);
             if (speed < 120) speed++;
         }else if (speed != 0) {
-            ball = new Ball((float)Math.PI,0,0,-99.0f);
+            ball = new Ball(-cameraX,-cameraY,cameraZ);
             Vector3f v = new Vector3f(mouseX,mouseY,0.0f);
             v.normalise();
-            v.scale((float) speed / 20);
+            v.scale((float) speed / 30);
             ball.setSpeed(v);
             System.out.println("Speed: " + speed);
             speed = 0;
@@ -89,7 +89,7 @@ public class Game extends GameStateTemplate {
     private void draw() {
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
         if (ball != null)
-            if (!ball.update()) ball = null;
+            if (!ball.update(cameraX,cameraY,cameraZ)) ball = null;
         
         GL11.glLoadIdentity();                          // Reset The Current Modelview Matrix
         GL11.glRotatef(0.0f, 0.0f, 0.0f, 0.0f);

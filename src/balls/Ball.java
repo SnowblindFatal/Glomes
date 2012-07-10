@@ -18,8 +18,8 @@ import org.newdawn.slick.opengl.TextureLoader;
  * @author Jusku
  */
 public class Ball extends Sphere{
-    public final int slices = 32;
-    private float r;
+    private final int slices = 32;
+    private final float r = 1.0f;
     private Vector3f speed = new Vector3f(0,0,0), location = new Vector3f(0,0,0);
     private Texture texture;
 
@@ -28,21 +28,10 @@ public class Ball extends Sphere{
 
     private My_Quaternion rotation = new My_Quaternion();
 
-    public Ball(){
-        super();
-        //init();
-    }
+    public Ball(){}
 
-    public Ball(float r){
-        super();
-        this.r = r;
-        init();
-    }
-
-    public Ball(float r, float x, float y, float z){
-        super();
-        this.r = r;
-        this.set_coords(x, y, z);
+    public Ball(float x, float y, float z){                
+        this.set_coords(x, y, z+r);
         init();
     }
 
@@ -59,24 +48,24 @@ public class Ball extends Sphere{
         }
     }
 
-    public void drawing(){
+    private void drawing(float cx, float cy){
         getTexture().bind();
 
         GL11.glPushMatrix();
         GL11.glLoadIdentity();
         Vector3f v = location;
 
-        GL11.glTranslatef(v.getX(), v.getY(), v.getZ());
+        GL11.glTranslatef(v.getX()+cx, v.getY()+cy, v.getZ());
         GL11.glMultMatrix(rotationMatrix);
         draw(r, slices, slices);
         GL11.glPopMatrix();
     }
 
-    public boolean update(){
+    public boolean update(float cx, float cy, float cz){
         Vector3f.add(location, speed, location);
-
+        location.setZ(cz+1.0f);
         Vector3f v = speed;
-        Vector4f v1 = new Vector4f(v.getY(),-v.getX(),v.getZ(),v.length()/2);
+        Vector4f v1 = new Vector4f(v.getY(),-v.getX(),v.getZ(),v.length());
 
         My_Quaternion q = new My_Quaternion();
         q.setFromAxisAngle(v1);
@@ -87,9 +76,14 @@ public class Ball extends Sphere{
                                 rotation.tomatrix()).flip();
         v = getLocation();
 
-        drawing();
-        if (v.getX() > 100 || v.getY() > 100) return false;
+        drawing(cx,cy);
+        if (v.getX() > 1000 || v.getY() > 1000) return false;
+        else if(v.getX() < -1000 || v.getY() < -1000) return false;
         return true;
+    }
+
+    private void collide(){
+        
     }
 
     public final void set_coords(float x,float y,float z){
