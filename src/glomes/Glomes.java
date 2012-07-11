@@ -84,6 +84,11 @@ public class Glomes {
         GL11.glHint(GL11.GL_PERSPECTIVE_CORRECTION_HINT, GL11.GL_NICEST);
         
         
+        GL11.glPolygonMode(GL11.GL_FRONT, GL11.GL_FILL);
+        GL11.glPolygonMode(GL11.GL_BACK, GL11.GL_LINE); //Backsides of textures are just wireframes.
+        //If your textures are just wireframes, make sure you draw the vertice in counter-clockwise
+        //rotation. E.g.: (0,0; 1,0; 1,1; 0,1).
+        
     }
     private void stackHandler(){
         while (stateStack.empty() == false){

@@ -35,8 +35,8 @@ public class Wall {
         squaresOccupied = new LinkedList();
         endPoint1 = new Vector3f(x1, y1, Statics.FLOOR_HEIGHT);
         endPoint2 = new Vector3f(x2, y2, Statics.FLOOR_HEIGHT);
-        vector = new Vector3f(x2 - x1, y2 - y1, 0f);
-        length = (float) Math.sqrt(vector.getX() * vector.getX() + vector.getY() * vector.getY());
+        vector = Vector3f.sub(endPoint2, endPoint1, null);
+        length = (float)Math.sqrt(vector.lengthSquared());
         
         material = newMaterial;
         grid = newGrid;
@@ -157,30 +157,6 @@ public class Wall {
         GL11.glNormal3f(normal.getX(), normal.getY(), normal.getZ());
         
         GL11.glTexCoord2f(
-                (0f + textureOffset) * widthFactor, 
-                -Statics.FLOOR_HEIGHT * heightFactor);
-        GL11.glVertex3f(
-                endPoint1.getX(), 
-                endPoint1.getY(), 
-                Statics.FLOOR_HEIGHT);
-        
-        GL11.glTexCoord2f(
-                (0f + textureOffset) * widthFactor, 
-                -Statics.WALL_HEIGHT * heightFactor);
-        GL11.glVertex3f(
-                endPoint1.getX(), 
-                endPoint1.getY(), 
-                Statics.WALL_HEIGHT);
-        
-        GL11.glTexCoord2f(
-                (length + textureOffset) * widthFactor, 
-                -Statics.WALL_HEIGHT * heightFactor);
-        GL11.glVertex3f(
-                endPoint2.getX(), 
-                endPoint2.getY(), 
-                Statics.WALL_HEIGHT);
-        
-        GL11.glTexCoord2f(
                 (length + textureOffset) * widthFactor, 
                 -Statics.FLOOR_HEIGHT * heightFactor);
         GL11.glVertex3f(
@@ -188,6 +164,30 @@ public class Wall {
                 endPoint2.getY(), 
                 Statics.FLOOR_HEIGHT);
         
+        GL11.glTexCoord2f(
+                (length + textureOffset) * widthFactor,
+                -Statics.WALL_HEIGHT * heightFactor);
+        GL11.glVertex3f(
+                endPoint2.getX(),
+                endPoint2.getY(),
+                Statics.WALL_HEIGHT);
+
+        GL11.glTexCoord2f(
+                (0f + textureOffset) * widthFactor,
+                -Statics.WALL_HEIGHT * heightFactor);
+        GL11.glVertex3f(
+                endPoint1.getX(),
+                endPoint1.getY(),
+                Statics.WALL_HEIGHT);
+
+        GL11.glTexCoord2f(
+                (0f + textureOffset) * widthFactor,
+                -Statics.FLOOR_HEIGHT * heightFactor);
+        GL11.glVertex3f(
+                endPoint1.getX(),
+                endPoint1.getY(),
+                Statics.FLOOR_HEIGHT);
+
         GL11.glEnd();
         GL11.glEndList();
     }
@@ -197,12 +197,11 @@ public class Wall {
         //normals generated here will point to the wrong way.
         
         //The Z component of the first vector is zero, and the X and Y components of the second vector are zero.
-        
-        
-//        float vector2Z = 1f;
         normal = new Vector3f(vector.getY() / length, -vector.getX() / length, 0f);
 //        System.out.println(vectorX + ", " + vectorY + "; normal: " + normalX + ", " + normalY + ".");
         
+        
+        //To refresh memory about cross product:
         /*
          * Begin Function CalculateSurfaceNormal (Input Triangle) Returns Vector
          *
