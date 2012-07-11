@@ -70,9 +70,32 @@ public class Map {
         }
     }
     
+    public void update(){
+        for (Ball ball : balls) {
+            ball.update();
+        }
+    }
+    
     public void draw(){
         for (Obstacle obstacle : obstacles){
             obstacle.draw();
+        }
+        for (Ball ball : balls){
+            ball.draw();
+        }
+    }
+    public GridSquare[][] getGrid(){
+        return grid;
+    }
+    
+    
+    //Some test methods.
+    public void addBall(Ball newBall){
+        balls.add(newBall);
+    }
+    public void accelerateBall(float x, float y, float z){
+        if (balls.size() > 0){
+            balls.getFirst().accelerate(x, y, z);
         }
     }
 }

@@ -12,7 +12,7 @@ public class Statics {
     
     public static final String TITLE = "Glomes";
     public static final int FRAMERATE = 60, MENU_STATE = 0, GAME_STATE = 1;
-    public static final float FLOOR_HEIGHT = 0f, WALL_HEIGHT  = 20f;
+    public static final float FLOOR_HEIGHT = 0f, WALL_HEIGHT  = 4f;
     
     private static int DisplayWidth = 800, DisplayHeight = 600;
     private static float pixelsPerUnit = 32f;

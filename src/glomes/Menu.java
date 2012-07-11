@@ -111,21 +111,23 @@ public class Menu extends GameStateTemplate {
             //return false and let my own logic deal with the input.
             if (gui.handleKey(eventKey, eventChar, pressed) == false){
                 System.out.println("no widget used keyboard event. Keyboard keyCode: " + eventKey + ", Character: " + eventChar);
-                switch (eventKey) {
-                    case Keyboard.KEY_ESCAPE:
-                        quitBoolean = true;
-                        break;
-                    case Keyboard.KEY_RETURN:
-                        allDone();
-                        break;
-                    case Keyboard.KEY_SPACE:
-                        break;
-                    case Keyboard.KEY_F1:
-                        
-                        //Is there a better way to clear focus?
-                        testButton.requestKeyboardFocus();
-                        testButton.giveupKeyboardFocus();
-                        break;
+                if (pressed == true){
+                    switch (eventKey) {
+                        case Keyboard.KEY_ESCAPE:
+                            quitBoolean = true;
+                            break;
+                        case Keyboard.KEY_RETURN:
+                            allDone();
+                            break;
+                        case Keyboard.KEY_SPACE:
+                            break;
+                        case Keyboard.KEY_F1:
+
+                            //Is there a better way to clear focus?
+                            testButton.requestKeyboardFocus();
+                            testButton.giveupKeyboardFocus();
+                            break;
+                    }
                 }
             }
 

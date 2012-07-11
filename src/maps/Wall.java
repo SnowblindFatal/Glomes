@@ -36,7 +36,7 @@ public class Wall {
         endPoint1 = new Vector3f(x1, y1, Statics.FLOOR_HEIGHT);
         endPoint2 = new Vector3f(x2, y2, Statics.FLOOR_HEIGHT);
         vector = Vector3f.sub(endPoint2, endPoint1, null);
-        length = (float)Math.sqrt(vector.lengthSquared());
+        length = vector.length();
         
         material = newMaterial;
         grid = newGrid;
@@ -129,7 +129,7 @@ public class Wall {
                 square.removeWall(this);
             } catch (Exception ex) {
                 Logger.getLogger(Wall.class.getName()).log(Level.SEVERE, null, ex);
-                System.exit(0);
+                System.exit(1002);
             }
         }
         squaresOccupied.clear();
@@ -137,7 +137,14 @@ public class Wall {
     
     
     private void occupySquare(int x, int y){
-        grid[x][y].occupyWall(this);
+        try{
+            grid[x][y].occupyWall(this);
+        }catch(Exception ex){
+            System.out.println("Wall out of boundaries! A map vertex is outside the playable map area.");
+            Logger.getLogger(Wall.class.getName()).log(Level.SEVERE, null, ex);
+            System.exit(2002);
+        }
+        
         squaresOccupied.add(grid[x][y]);
     }
     
