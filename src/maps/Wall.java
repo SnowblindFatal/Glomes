@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
@@ -20,25 +21,22 @@ import org.newdawn.slick.util.ResourceLoader;
  */
 public class Wall {
     private String material;
-    private float xCoordinate1, yCoordinate1, xCoordinate2, yCoordinate2, length, vectorX, vectorY, normalX, normalY, normalZ, textureOffset;
+    private float length, textureOffset;
     private LinkedList<GridSquare> squaresOccupied;
     private GridSquare[][] grid;
     private int displayListIndex;
     private Texture wallTexture;
+    private Vector3f endPoint1, endPoint2, vector, normal;
     
     public Wall(float x1, float y1, float x2, float y2, String newMaterial, GridSquare[][] newGrid, int newDisplayListIndex){
         textureOffset = 0f; //Do something meaningful with this in the future!
         
         displayListIndex = newDisplayListIndex;
         squaresOccupied = new LinkedList();
-        xCoordinate1 = x1;
-        yCoordinate1 = y1;
-        xCoordinate2 = x2;
-        yCoordinate2 = y2;
-        
-        vectorX = xCoordinate2 - xCoordinate1;
-        vectorY = yCoordinate2 - yCoordinate1;
-        length = (float) (Math.sqrt(vectorY * vectorY + vectorX * vectorX));
+        endPoint1 = new Vector3f(x1, y1, Statics.FLOOR_HEIGHT);
+        endPoint2 = new Vector3f(x2, y2, Statics.FLOOR_HEIGHT);
+        vector = new Vector3f(x2 - x1, y2 - y1, 0f);
+        length = (float) Math.sqrt(vector.getX() * vector.getX() + vector.getY() * vector.getY());
         
         material = newMaterial;
         grid = newGrid;
@@ -49,10 +47,10 @@ public class Wall {
     private void occupyGrid(){
         //Tell all squares this wall intersects with to add the wall to collision checks.
         int increment = 1;
-        int xInt1 = (int) xCoordinate1;
-        int yInt1 = (int) yCoordinate1;
-        int xInt2 = (int) xCoordinate2;
-        int yInt2 = (int) yCoordinate2;
+        int xInt1 = (int) endPoint1.getX();
+        int yInt1 = (int) endPoint1.getY();
+        int xInt2 = (int) endPoint2.getX();
+        int yInt2 = (int) endPoint2.getY();
         int diff;
         
         if (yInt1 == yInt2){
@@ -85,32 +83,32 @@ public class Wall {
         //TODO: Figure out what actually happens here. I kinda get it, but the error variable is still a bit confusing.
         //Note: doesn't work for horizontal or vertical lines as I removed checks for them.
         
-        float dx = Math.abs(xCoordinate2 - xCoordinate1);
-        float dy = Math.abs(yCoordinate2 - yCoordinate1);
+        float dx = Math.abs(vector.getX());
+        float dy = Math.abs(vector.getY());
 
-        int xInt1 = (int) xCoordinate1;
-        int yInt1 = (int) yCoordinate1;
-        int xInt2 = (int) xCoordinate2;
-        int yInt2 = (int) yCoordinate2;
+        int xInt1 = (int) endPoint1.getX();
+        int yInt1 = (int) endPoint1.getY();
+        int xInt2 = (int) endPoint2.getX();
+        int yInt2 = (int) endPoint2.getY();
 
         int n = 1;
         int x_inc, y_inc;
         float error;
         
         n += Math.abs(xInt1 - xInt2) + Math.abs(yInt1 - yInt2);
-        if (xCoordinate2 > xCoordinate1) {
+        if (endPoint2.getX() > endPoint1.getX()) {
             x_inc = 1;
-            error = (xInt1 + 1 - xCoordinate1) * dy;
+            error = (xInt1 + 1 - endPoint1.getX()) * dy;
         } else {
             x_inc = -1;
-            error = (xCoordinate1 - xInt1) * dy;
+            error = (endPoint1.getX() - xInt1) * dy;
         }
-        if (yCoordinate2 > yCoordinate1) {
+        if (endPoint2.getY() > endPoint1.getY()) {
             y_inc = 1;
-            error -= (yInt1 + 1 - yCoordinate1) * dx;
+            error -= (yInt1 + 1 - endPoint1.getY()) * dx;
         } else {
             y_inc = -1;
-            error -= (yCoordinate1 - yInt1) * dx;
+            error -= (endPoint1.getY() - yInt1) * dx;
         }
 
         for (int i = n; i > 0; i--) {
@@ -156,38 +154,38 @@ public class Wall {
         
         GL11.glNewList(displayListIndex, GL11.GL_COMPILE); // Start With The List.
         GL11.glBegin(GL11.GL_QUADS);
-        GL11.glNormal3f(normalX, normalY, normalZ);
+        GL11.glNormal3f(normal.getX(), normal.getY(), normal.getZ());
         
         GL11.glTexCoord2f(
                 (0f + textureOffset) * widthFactor, 
                 -Statics.FLOOR_HEIGHT * heightFactor);
         GL11.glVertex3f(
-                xCoordinate1, 
-                yCoordinate1, 
+                endPoint1.getX(), 
+                endPoint1.getY(), 
                 Statics.FLOOR_HEIGHT);
         
         GL11.glTexCoord2f(
                 (0f + textureOffset) * widthFactor, 
                 -Statics.WALL_HEIGHT * heightFactor);
         GL11.glVertex3f(
-                xCoordinate1, 
-                yCoordinate1, 
+                endPoint1.getX(), 
+                endPoint1.getY(), 
                 Statics.WALL_HEIGHT);
         
         GL11.glTexCoord2f(
                 (length + textureOffset) * widthFactor, 
                 -Statics.WALL_HEIGHT * heightFactor);
         GL11.glVertex3f(
-                xCoordinate2, 
-                yCoordinate2, 
+                endPoint2.getX(), 
+                endPoint2.getY(), 
                 Statics.WALL_HEIGHT);
         
         GL11.glTexCoord2f(
                 (length + textureOffset) * widthFactor, 
                 -Statics.FLOOR_HEIGHT * heightFactor);
         GL11.glVertex3f(
-                xCoordinate2, 
-                yCoordinate2, 
+                endPoint2.getX(), 
+                endPoint2.getY(), 
                 Statics.FLOOR_HEIGHT);
         
         GL11.glEnd();
@@ -202,10 +200,7 @@ public class Wall {
         
         
 //        float vector2Z = 1f;
-        
-        normalX = vectorY / length;
-        normalY = -vectorX / length;
-        normalZ = 0f;
+        normal = new Vector3f(vector.getY() / length, -vector.getX() / length, 0f);
 //        System.out.println(vectorX + ", " + vectorY + "; normal: " + normalX + ", " + normalY + ".");
         
         /*
