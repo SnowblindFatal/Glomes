@@ -4,9 +4,12 @@ import java.io.FileInputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import maps.Corner;
 import maps.GridSquare;
+import maps.Wall;
 import misc.My_Quaternion;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
@@ -97,6 +100,67 @@ public class Ball extends Sphere{
     }
 
     private void checkCollisions(){
+        HashSet<Ball> collisionBalls = new HashSet();
+        HashSet<Wall> collisionWalls = new HashSet();
+        HashSet<Corner> collisionCorners = new HashSet();
+
+        //This setup is clumsy as hell, but I couldn't think of a better way
+        //to make sure that the collision checking doesn't go out of grid boundaries.
+        //Perhaps limit the outer edges of the map regardless of everything?
+        //Probably the best solution to this, since I have a feeling that this
+        //isn't the last time we'll be running into boundary checks.
+        int lowX, highX, lowY, highY;
+        if (gridX - 2 < 0) {
+            lowX = 0;
+        } else {
+            lowX = gridX - 2;
+        }
+        if (gridY - 2 < 0) {
+            lowY = 0;
+        } else {
+            lowY = gridY - 2;
+        }
+        
+        if (gridX + 2 > grid.length) {
+            highX = grid.length;
+        } else {
+            highX = gridX + 2;
+        }
+        if (gridY + 2 > grid[0].length) {
+            highY = grid[0].length;
+        } else {
+            highY = gridY + 2;
+        }
+        
+        //First find all the objects this thing even could collide with!
+        for (int x = lowX; x < highX; x++){
+            for (int y = lowY; y < highY; y++){
+                if (grid[x][y].hasItems() == true){
+                    for (Corner newCorner : grid[x][y].getCorners()){
+                        collisionCorners.add(newCorner);
+                    }
+                    for (Wall newWall : grid[x][y].getWalls()) {
+                        collisionWalls.add(newWall);
+                    }
+                    for (Ball newBall : grid[x][y].getBalls()) {
+                        if (newBall != this){
+                            collisionBalls.add(newBall);
+                        }
+                    }
+                }
+            }
+        }
+        System.out.println("new round");
+        //Actually check for collisions here!
+        for (Ball ball : collisionBalls) {
+            System.out.println("ball");
+        }
+        for (Corner corner : collisionCorners) {
+            System.out.println("corner");
+        }
+        for (Wall wall : collisionWalls) {
+            System.out.println("wall");
+        }
         
     }
     
