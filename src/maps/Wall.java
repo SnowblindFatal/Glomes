@@ -225,7 +225,17 @@ public class Wall {
          */
     }
     
-    
+    public Vector3f getEnd(){
+        return endPoint2;
+    }
+
+    public Vector3f getBeginning(){
+        return endPoint1;
+    }
+
+    public Vector3f getNormal(){
+        return normal;
+    }
     
     public void draw(){
         wallTexture.bind();

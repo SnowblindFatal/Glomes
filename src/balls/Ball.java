@@ -26,6 +26,7 @@ import org.newdawn.slick.opengl.TextureLoader;
 public class Ball extends Sphere{
     private final int slices = 32;
     private final float radius = 1.0f;
+    private final float collisionDistance = radius + 0.1f;
     private Vector3f speed, location, camera;
     private Texture texture;
     private GridSquare[][] grid;
@@ -84,25 +85,19 @@ public class Ball extends Sphere{
         GL11.glPopMatrix();
     }
 
-    public boolean update(){
+    public void update(){
         
         Vector3f.add(location, speed, location);
         updateGridPosition();
-        checkCollisions();
-
-        if (location.getX() > 1000 || location.getY() > 1000){
-            return false;
-        }
-        else if(location.getX() < -1000 || location.getY() < -1000){
-            return false;
-        }
-        return true;
+        checkCollisions();       
     }
 
     private void checkCollisions(){
         HashSet<Ball> collisionBalls = new HashSet();
         HashSet<Wall> collisionWalls = new HashSet();
         HashSet<Corner> collisionCorners = new HashSet();
+        Vector3f normal, beginning, end, vector = new Vector3f();
+        float help;
 
         //This setup is clumsy as hell, but I couldn't think of a better way
         //to make sure that the collision checking doesn't go out of grid boundaries.
@@ -159,9 +154,34 @@ public class Ball extends Sphere{
             System.out.println("corner");
         }
         for (Wall wall : collisionWalls) {
+            beginning = wall.getBeginning();
+            end = wall.getEnd();
+            normal = wall.getNormal();
+            Vector3f.sub(end, beginning, vector);
+            if (distance(vector,end) < collisionDistance){
+                help = (float) Math.cos(Vector3f.angle(speed, normal));
+                help *= speed.length();
+                help *= 2;
+                normal.normalise();
+                normal.scale(Math.abs(help));
+                accelerate(normal);
+            }
             System.out.println("wall");
         }
+    }
+
+    private float distance(Vector3f vector, Vector3f end){
+        //y = kx + b
+        float dist,k,b;
+        if (vector.getX() == 0) return Math.abs(end.getX() - location.getX());
+        k = vector.getY() / vector.getX();
+        b = end.getY() - k*end.getX();
         
+        if (k == 0) return Math.abs(end.getY() - location.getY());
+
+        dist = Math.abs(-k*location.getX() + location.getY() - b);
+        dist /= Math.sqrt(k*k);
+        return dist;
     }
     
     private void addToGrid(){
