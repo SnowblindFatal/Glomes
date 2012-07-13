@@ -154,31 +154,49 @@ public class Ball extends Sphere{
         accelerate(direction);
     }
     private boolean checkWallCollision(Wall wall){
-        Vector3f normal = new Vector3f();
-        Vector3f collisionPoint = new Vector3f();
         float distance;
         distance = distanceFromWall(wall.getVector(), wall.getEnd());
         if (distance < collisionDistance) {
+            Vector3f normal = new Vector3f();
+            Vector3f collisionPoint = new Vector3f();
             //We have to use the set command because otherwise we would be actually altering the wall's normal.
             normal.set(wall.getNormal());
             
             //Not actually the collisionPoint yet, but this way we don't have to make
             //new objects.
             collisionPoint.set(normal);
-            collisionPoint.scale(distance);
+//            collisionPoint.scale(distance);
             //Now we make it the actual intersection point:
             Vector3f.sub(location, collisionPoint, collisionPoint);
-            System.out.println(collisionPoint.getX() + ", " + collisionPoint.getY());
+//            System.out.println(collisionPoint.getX() + ", " + collisionPoint.getY());
             //Check if the collision happens actually on the wall and not outside it.
+
+            float collisionX = collisionPoint.getX(), 
+                    collisionY = collisionPoint.getY(),
+                    wallStartX = wall.getBeginning().getX(), 
+                    wallStartY = wall.getBeginning().getY(), 
+                    wallEndX = wall.getEnd().getX(), 
+                    wallEndY = wall.getEnd().getY();
+            
             if (wall.getVector().getX() == 0f){
-                if ((wall.getBeginning().getY() > collisionPoint.getY() || wall.getEnd().getY() > collisionPoint.getY())
-                        && (wall.getBeginning().getY() < collisionPoint.getY() || wall.getEnd().getY() < collisionPoint.getY())){
+                if ((wallStartY > collisionY || wallEndY > collisionY)
+                        && (wallStartY < collisionY || wallEndY < collisionY)){
                     applyWallCollision(normal);
                     return true;
                 }
-            }else{
-                if ((wall.getBeginning().getX() > collisionPoint.getX() || wall.getEnd().getX() > collisionPoint.getX())
-                        && (wall.getBeginning().getX() < collisionPoint.getX() || wall.getEnd().getX() < collisionPoint.getX())) {
+            }
+            else if(wall.getVector().getY() == 0f){
+                if ((wallStartX > collisionX || wallEndX > collisionX)
+                        && (wallStartX < collisionX || wallEndX < collisionX)) {
+                    applyWallCollision(normal);
+                    return true;
+                }
+            }
+            else{
+                if (((wallStartX > collisionX || wallEndX > collisionX)
+                        && (wallStartX < collisionX || wallEndX < collisionX))
+                        &&((wallStartY > collisionY || wallEndY > collisionY)
+                        && (wallStartY < collisionY || wallEndY < collisionY))) {
                     applyWallCollision(normal);
                     return true;
                 }
