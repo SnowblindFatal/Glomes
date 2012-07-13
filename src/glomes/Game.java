@@ -87,18 +87,27 @@ public class Game extends GameStateTemplate {
             camera.setZ(camera.getZ() + 1.1f);
         }
         
+        float factor = 5f;
+        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+            factor = 1f;
+        }
+        
         if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
-            map.accelerateBall(0, 0.01f, 0);
+            map.accelerateBall(0, 0.001f * factor, 0);
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
-            map.accelerateBall(0, -0.01f, 0);
+            map.accelerateBall(0, -0.001f * factor, 0);
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
-            map.accelerateBall(-0.01f, 0, 0);
+            map.accelerateBall(-0.001f * factor, 0, 0);
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
-            map.accelerateBall(0.01f, 0, 0);
+            map.accelerateBall(0.001f * factor, 0, 0);
         }
+        if (Keyboard.isKeyDown(Keyboard.KEY_Z)) {
+            map.stopBall();
+        }
+        
 
         if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)){
             quitBoolean = true;

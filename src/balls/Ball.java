@@ -117,9 +117,13 @@ public class Ball extends Sphere{
             }
         }
         //Actually check for collisions here!
+        //return if one collision is found. Numerous collisions per tick may (or may not!) fuck up the physics.
         for (Ball ball : collisionBalls) {
         }
         for (Corner corner : collisionCorners) {
+            if(checkCornerCollision(corner) == true){
+                return;
+            }
         }
         for (Wall wall : collisionWalls) {
             if(checkWallCollision(wall) == true){
@@ -127,11 +131,33 @@ public class Ball extends Sphere{
             }
         }
     }
+    private boolean checkCornerCollision(Corner corner){
+        Vector3f direction = new Vector3f();
+        Vector3f.sub(location, corner.getLocation(), direction);
+        //Corner's Z is 0f, Ball's Z is ball.radius. We don't care about Z so...
+        direction.setZ(0f);
+//        System.out.println(direction.length());
+        if (direction.length() < collisionDistance){
+            applyCornerCollision(direction);
+            return true;
+        }
+        return false;
+    }
+    private void applyCornerCollision(Vector3f direction){
+        System.out.println("cornercollide");
+        float help;
+        help = (float) Math.cos(Vector3f.angle(speed, direction));
+        help *= speed.length();
+        help *= 2;
+        direction.normalise();
+        direction.scale(Math.abs(help));
+        accelerate(direction);
+    }
     private boolean checkWallCollision(Wall wall){
         Vector3f normal = new Vector3f();
         Vector3f collisionPoint = new Vector3f();
         float distance;
-        distance = distance(wall.getVector(), wall.getEnd());
+        distance = distanceFromWall(wall.getVector(), wall.getEnd());
         if (distance < collisionDistance) {
             //We have to use the set command because otherwise we would be actually altering the wall's normal.
             normal.set(wall.getNormal());
@@ -145,8 +171,8 @@ public class Ball extends Sphere{
             System.out.println(collisionPoint.getX() + ", " + collisionPoint.getY());
             //Check if the collision happens actually on the wall and not outside it.
             if (wall.getVector().getX() == 0f){
-                if ((wall.getBeginning().getY() > collisionPoint.getY() || wall.getEnd().getY() > collisionPoint.getY()) &&
-                        (wall.getBeginning().getY() < collisionPoint.getY() || wall.getEnd().getY() < collisionPoint.getY())){
+                if ((wall.getBeginning().getY() > collisionPoint.getY() || wall.getEnd().getY() > collisionPoint.getY())
+                        && (wall.getBeginning().getY() < collisionPoint.getY() || wall.getEnd().getY() < collisionPoint.getY())){
                     applyWallCollision(normal);
                     return true;
                 }
@@ -161,7 +187,7 @@ public class Ball extends Sphere{
         return false;
     }
 
-    private float distance(Vector3f wallVector, Vector3f wallEnd){
+    private float distanceFromWall(Vector3f wallVector, Vector3f wallEnd){
         //y = kx + b
         float dist,k,b;
         if (wallVector.getX() == 0){
@@ -178,6 +204,7 @@ public class Ball extends Sphere{
     }
     
     private void applyWallCollision(Vector3f normal){
+        System.out.println("WALLcollide");
         float help;
         help = (float) Math.cos(Vector3f.angle(speed, normal));
         help *= speed.length();

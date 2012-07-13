@@ -110,7 +110,7 @@ public class Menu extends GameStateTemplate {
             //If no widget finds any use for the keyboard event, it will
             //return false and let my own logic deal with the input.
             if (gui.handleKey(eventKey, eventChar, pressed) == false){
-                System.out.println("no widget used keyboard event. Keyboard keyCode: " + eventKey + ", Character: " + eventChar);
+//                System.out.println("no widget used keyboard event. Keyboard keyCode: " + eventKey + ", Character: " + eventChar);
                 if (pressed == true){
                     switch (eventKey) {
                         case Keyboard.KEY_ESCAPE:
@@ -143,12 +143,12 @@ public class Menu extends GameStateTemplate {
             //IMPORTANT: TWL uses flipped Y axis for mouse location!
             if (gui.handleMouse(mouseX, Statics.getDisplayHeight() - mouseY, eventKey, pressed) == false){
                 
-                System.out.println("no widget used mouse event. Event button: " + eventKey);
+//                System.out.println("no widget used mouse event. Event button: " + eventKey);
                 switch (eventKey) {
                 }
             }
             if (gui.handleMouseWheel(mouseWheelDelta) == false){
-                System.out.println("no widget used mouse scroll. Scroll delta: " + mouseWheelDelta);
+//                System.out.println("no widget used mouse scroll. Scroll delta: " + mouseWheelDelta);
             }
         }
         
