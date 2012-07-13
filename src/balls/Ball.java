@@ -40,6 +40,7 @@ public class Ball extends Sphere{
 
     public Ball(Vector3f newCamera, GridSquare[][] newGrid){
         grid = newGrid;
+        System.out.println(grid.length + ", " + grid[0].length);
         camera = newCamera;
         speed = new Vector3f(0, 0, 0);
         location = new Vector3f(-camera.getX(), -camera.getY(), radius);
@@ -96,40 +97,10 @@ public class Ball extends Sphere{
         HashSet<Ball> collisionBalls = new HashSet();
         HashSet<Wall> collisionWalls = new HashSet();
         HashSet<Corner> collisionCorners = new HashSet();
-        Vector3f normal, beginning, end, vector = new Vector3f();
-        float help;
-
-        //This setup is clumsy as hell, but I couldn't think of a better way
-        //to make sure that the collision checking doesn't go out of grid boundaries.
-        //Perhaps limit the outer edges of the map regardless of everything?
-        //Probably the best solution to this, since I have a feeling that this
-        //isn't the last time we'll be running into boundary checks.
-        int lowX, highX, lowY, highY;
-        if (gridX - 2 < 0) {
-            lowX = 0;
-        } else {
-            lowX = gridX - 2;
-        }
-        if (gridY - 2 < 0) {
-            lowY = 0;
-        } else {
-            lowY = gridY - 2;
-        }
-        
-        if (gridX + 2 > grid.length) {
-            highX = grid.length;
-        } else {
-            highX = gridX + 2;
-        }
-        if (gridY + 2 > grid[0].length) {
-            highY = grid[0].length;
-        } else {
-            highY = gridY + 2;
-        }
         
         //First find all the objects this thing even could collide with!
-        for (int x = lowX; x < highX; x++){
-            for (int y = lowY; y < highY; y++){
+        for (int x = gridX - 2; x < gridX + 2; x++){
+            for (int y = gridY - 2; y < gridY + 2; y++){
                 if (grid[x][y].hasItems() == true){
                     for (Corner newCorner : grid[x][y].getCorners()){
                         collisionCorners.add(newCorner);
@@ -145,43 +116,74 @@ public class Ball extends Sphere{
                 }
             }
         }
-        System.out.println("new round");
         //Actually check for collisions here!
         for (Ball ball : collisionBalls) {
-            System.out.println("ball");
         }
         for (Corner corner : collisionCorners) {
-            System.out.println("corner");
         }
         for (Wall wall : collisionWalls) {
-            beginning = wall.getBeginning();
-            end = wall.getEnd();
-            normal = wall.getNormal();
-            Vector3f.sub(end, beginning, vector);
-            if (distance(vector,end) < collisionDistance){
-                help = (float) Math.cos(Vector3f.angle(speed, normal));
-                help *= speed.length();
-                help *= 2;
-                normal.normalise();
-                normal.scale(Math.abs(help));
-                accelerate(normal);
+            if(checkWallCollision(wall) == true){
+                return;
             }
-            System.out.println("wall");
         }
     }
+    private boolean checkWallCollision(Wall wall){
+        Vector3f normal = new Vector3f();
+        Vector3f collisionPoint = new Vector3f();
+        float distance;
+        distance = distance(wall.getVector(), wall.getEnd());
+        if (distance < collisionDistance) {
+            //We have to use the set command because otherwise we would be actually altering the wall's normal.
+            normal.set(wall.getNormal());
+            
+            //Not actually the collisionPoint yet, but this way we don't have to make
+            //new objects.
+            collisionPoint.set(normal);
+            collisionPoint.scale(distance);
+            //Now we make it the actual intersection point:
+            Vector3f.sub(location, collisionPoint, collisionPoint);
+            System.out.println(collisionPoint.getX() + ", " + collisionPoint.getY());
+            //Check if the collision happens actually on the wall and not outside it.
+            if (wall.getVector().getX() == 0f){
+                if ((wall.getBeginning().getY() > collisionPoint.getY() || wall.getEnd().getY() > collisionPoint.getY()) &&
+                        (wall.getBeginning().getY() < collisionPoint.getY() || wall.getEnd().getY() < collisionPoint.getY())){
+                    applyWallCollision(normal);
+                    return true;
+                }
+            }else{
+                if ((wall.getBeginning().getX() > collisionPoint.getX() || wall.getEnd().getX() > collisionPoint.getX())
+                        && (wall.getBeginning().getX() < collisionPoint.getX() || wall.getEnd().getX() < collisionPoint.getX())) {
+                    applyWallCollision(normal);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
-    private float distance(Vector3f vector, Vector3f end){
+    private float distance(Vector3f wallVector, Vector3f wallEnd){
         //y = kx + b
         float dist,k,b;
-        if (vector.getX() == 0) return Math.abs(end.getX() - location.getX());
-        k = vector.getY() / vector.getX();
-        b = end.getY() - k*end.getX();
-        
-        if (k == 0) return Math.abs(end.getY() - location.getY());
-
+        if (wallVector.getX() == 0){
+            return Math.abs(wallEnd.getX() - location.getX());
+        }
+        if (wallVector.getY() == 0) {
+            return Math.abs(wallEnd.getY() - location.getY());
+        }
+        k = wallVector.getY() / wallVector.getX();
+        b = wallEnd.getY() - k* wallEnd.getX();
         dist = Math.abs(-k*location.getX() + location.getY() - b);
-        dist /= Math.sqrt(k*k);
+        dist /= Math.abs(k);
         return dist;
+    }
+    
+    private void applyWallCollision(Vector3f normal){
+        float help;
+        help = (float) Math.cos(Vector3f.angle(speed, normal));
+        help *= speed.length();
+        help *= 2;
+        normal.scale(Math.abs(help));
+        accelerate(normal);
     }
     
     private void addToGrid(){

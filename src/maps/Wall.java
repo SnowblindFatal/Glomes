@@ -204,7 +204,8 @@ public class Wall {
         //normals generated here will point to the wrong way.
         
         //The Z component of the first vector is zero, and the X and Y components of the second vector are zero.
-        normal = new Vector3f(vector.getY() / length, -vector.getX() / length, 0f);
+        normal = new Vector3f(vector.getY(), -vector.getX(), 0f);
+        normal.normalise();
 //        System.out.println(vectorX + ", " + vectorY + "; normal: " + normalX + ", " + normalY + ".");
         
         
@@ -235,6 +236,9 @@ public class Wall {
 
     public Vector3f getNormal(){
         return normal;
+    }
+    public Vector3f getVector(){
+        return vector;
     }
     
     public void draw(){

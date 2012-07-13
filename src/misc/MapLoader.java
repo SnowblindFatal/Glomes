@@ -24,10 +24,13 @@ import org.ini4j.Wini;
 public class MapLoader {
     Wini iniReader;
     MapData mapData;
+    int bufferSize;
+    
     
     
     
     public MapData loadMap(String fileName){
+        bufferSize = 10;
         mapData = new MapData();
         File file = new File(fileName);
         try {
@@ -58,7 +61,7 @@ public class MapLoader {
         Section section = iniReader.get("GENERAL");
         mapData.setTitle(section.get("title"));
         mapData.setPlayerAmount(Integer.parseInt(section.get("playerAmount")));
-        mapData.setSize(Integer.parseInt(section.get("xSize")), Integer.parseInt(section.get("ySize")));
+        mapData.setSize(Integer.parseInt(section.get("xSize")) + 2 * bufferSize, Integer.parseInt(section.get("ySize")) + 2 * bufferSize);
         
     }
     
@@ -132,7 +135,7 @@ public class MapLoader {
         //Parses a pair of coordinates such as "(3, 94.2)" to float array.
         String subString = verticeString.trim().substring(1, verticeString.length() - 1);
         String[] stringCoordinate = subString.split(",");
-        float[] coordinatePair = {Float.parseFloat(stringCoordinate[0]), Float.parseFloat(stringCoordinate[1])};
+        float[] coordinatePair = {Float.parseFloat(stringCoordinate[0]) + bufferSize, Float.parseFloat(stringCoordinate[1]) + bufferSize};
 //        System.out.println(Float.parseFloat(stringCoordinate[1]));
         return coordinatePair;
     }
@@ -146,7 +149,7 @@ public class MapLoader {
         String[] stringCoordinate;
         for (int i = 0; i < vertexPairs.length; i++){
             stringCoordinate = vertexPairs[i].split(",");
-            float[] coordinatePair = {Float.parseFloat(stringCoordinate[0]), Float.parseFloat(stringCoordinate[1])};
+            float[] coordinatePair = {Float.parseFloat(stringCoordinate[0]) + bufferSize, Float.parseFloat(stringCoordinate[1]) + bufferSize};
             returnVertice.add(coordinatePair);
 //            System.out.println(coordinatePair[0] + ", " + coordinatePair[1]);
         }

@@ -7,6 +7,7 @@ package maps;
 import balls.Ball;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import org.lwjgl.util.vector.Vector3f;
 
 
 /**
@@ -96,6 +97,11 @@ public class Map {
     public void accelerateBall(float x, float y, float z){
         if (balls.size() > 0){
             balls.getFirst().accelerate(x, y, z);
+        }
+    }
+    public void stopBall(){
+        if (balls.size() > 0) {
+            balls.getFirst().setSpeed(new Vector3f());
         }
     }
 }
