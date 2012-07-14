@@ -126,28 +126,29 @@ public class Ball extends Sphere{
         }
         //Actually check for collisions here!
         //return if one collision is found. Numerous collisions per tick may (or may not!) fuck up the physics.
-        for (Ball ball : collisionBalls) {
-        }
-        for (Corner corner : collisionCorners) {
-            if(checkCornerCollision(corner) == true){
-                return;
-            }
-        }
         shortestDistance = 2f;
         for (Wall wall : collisionWalls) {
             newDistance = distanceFromWall(wall.getVector(), wall.getEnd());
-            if (newDistance < collisionDistance && newDistance < shortestDistance){
-                if (collisionPointInWall(wall, newDistance) == true){
-                    System.out.println(newDistance);
+            if (newDistance < collisionDistance && newDistance < shortestDistance) {
+                if (collisionPointInWall(wall, newDistance) == true) {
                     shortestDistance = newDistance;
                     collisionWall = wall;
                 }
             }
         }
-        if (collisionWall != null){
+        if (collisionWall != null) {
             applyWallCollision(collisionWall, shortestDistance);
             return;
         }
+        for (Corner corner : collisionCorners) {
+            if (checkCornerCollision(corner) == true) {
+                return;
+            }
+        }
+        for (Ball ball : collisionBalls) {
+        }
+
+
         
     }
     private boolean checkCornerCollision(Corner corner){
@@ -191,6 +192,8 @@ public class Ball extends Sphere{
         Vector3f.sub(location, collisionPoint, collisionPoint);
         Vector3f.sub(collisionPoint,wall.getEnd(),cornerDist);
         Vector3f.sub(collisionPoint,wall.getBeginning(),cornerDist1);
+        cornerDist.setZ(0f);
+        cornerDist1.setZ(0f);
 
         if (cornerDist.length() > wall.getVector().length()) check = false;
         else if(cornerDist1.length() > wall.getVector().length()) check = false;
