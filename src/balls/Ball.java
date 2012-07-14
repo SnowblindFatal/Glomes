@@ -29,7 +29,7 @@ public class Ball extends Sphere{
     private final float collisionDistance = radius + 0.0f;
     private final float mass = 1.0f;
 
-    private Vector3f speed, location, camera;
+    private Vector3f speed, speedCompound, location, camera;
     private Texture texture;
     private GridSquare[][] grid;
     private GridSquare currentSquare;
@@ -44,7 +44,8 @@ public class Ball extends Sphere{
         grid = newGrid;
         System.out.println(grid.length + ", " + grid[0].length);
         camera = newCamera;
-        speed = new Vector3f(0, 0, 0);
+        speed = new Vector3f(0f, 0f, 0f);
+        speedCompound = new Vector3f(0f, 0f, 0f);
         location = new Vector3f(-camera.getX(), -camera.getY(), radius);
         System.out.println(location.toString());
         init();
@@ -69,7 +70,8 @@ public class Ball extends Sphere{
     }
 
     public void draw(float dTime){
-        Vector4f v1 = new Vector4f(speed.getY() * dTime, -speed.getX() * dTime, speed.getZ() * dTime, speed.length() * dTime);
+        Vector4f v1 = new Vector4f(speedCompound.getY(), -speedCompound.getX(), speedCompound.getZ(), speedCompound.length());
+        speedCompound.scale(0f);
 
         My_Quaternion quaternion = new My_Quaternion();
         quaternion.setFromAxisAngle(v1);
@@ -94,9 +96,8 @@ public class Ball extends Sphere{
 
     public void update(float dTime){
 //        Vector3f.add(location, speed, location);
-        location.setX(location.getX() + speed.getX() * dTime);
-        location.setY(location.getY() + speed.getY() * dTime);
-        location.setZ(location.getZ() + speed.getZ() * dTime);
+        location.translate(speed.getX() * dTime, speed.getY() * dTime, speed.getZ() * dTime);
+        speedCompound.translate(speed.getX() * dTime, speed.getY() * dTime, speed.getZ() * dTime);
         updateGridPosition();
         checkCollisions();       
     }

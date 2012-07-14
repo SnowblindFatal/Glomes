@@ -21,7 +21,7 @@ public class Game extends GameStateTemplate {
     private boolean quitBoolean;
     private Ball ball;
     private float mouseX, mouseY, dTime;
-    private int speed = 0;
+    private float speed = 0;
     private GridSquare[][] grid;
     private Map map;
     private double time, timeNew;
@@ -64,7 +64,7 @@ public class Game extends GameStateTemplate {
         if (Mouse.isButtonDown(0)){
             mouseX = Mouse.getX() - Display.getWidth() / 2;
             mouseY = (Mouse.getY() - Display.getHeight() / 2);
-            if (speed < 120) speed++;
+            if (speed < 120) speed += dTime * 0.25;
         }else if (speed != 0) {
             ball = new Ball(camera, grid);
             Vector3f v = new Vector3f(mouseX,mouseY,0.0f);
@@ -140,6 +140,7 @@ public class Game extends GameStateTemplate {
         timeNew = System.nanoTime();
         dTime = (float) (timeNew - time);
         dTime /= 1000000f; //Convert to milliseconds.
+        dTime *= Statics.GAME_SPEED;
         time = timeNew;
     }
 }
