@@ -27,6 +27,8 @@ public class Ball extends Sphere{
     private final int slices = 20;
     private final float radius = 1.0f;
     private final float collisionDistance = radius + 0.0f;
+    private final float mass = 1.0f;
+
     private Vector3f speed, location, camera;
     private Texture texture;
     private GridSquare[][] grid;
@@ -150,6 +152,7 @@ public class Ball extends Sphere{
             }
         }
         for (Ball ball : collisionBalls) {
+            if (checkBallCollisions(ball)) return;
         }
 
 
@@ -173,13 +176,15 @@ public class Ball extends Sphere{
         float help;
         float moveDistance = collisionDistance - distance;
         Vector3f moveVector = new Vector3f();
-        help = (float) Math.cos(Vector3f.angle(speed, direction));
-        help *= speed.length();
-        help *= 2;
         direction.normalise();
         moveVector.set(direction);
         moveVector.scale(moveDistance);
         Vector3f.add(location, moveVector, location);
+
+        help = (float) Math.cos(Vector3f.angle(speed, direction));
+        help *= speed.length();
+        help *= 2;
+        
         direction.scale(Math.abs(help));
         accelerate(direction);
     }
@@ -232,15 +237,69 @@ public class Ball extends Sphere{
         float moveDistance = collisionDistance - distance;
 //        System.out.println("mutliplierlength: " + moveDistance);
         Vector3f moveVector = new Vector3f();
+        moveVector.set(normal);
+        moveVector.scale(moveDistance);
+        Vector3f.add(location, moveVector, location);
+
         help = (float) Math.cos(Vector3f.angle(speed, normal));
         help *= speed.length();
         help *= 2;
-        moveVector.set(normal);
+        
         normal.scale(Math.abs(help));
-        moveVector.scale(moveDistance);
-//        System.out.println("Vectorlength: " + moveVector.length());
-        Vector3f.add(location, moveVector, location);
         accelerate(normal);
+    }
+
+    private void applyBallCollision(Vector3f normal,Ball ball){
+        System.out.println("BallCollide");
+        Vector3f tangent = new Vector3f();
+        float v1n,v1t,v2n,v2t,nv1,nv2,dist = normal.length();
+        normal.normalise();
+        tangent.set(-normal.getY(), normal.getX());
+        
+        v1n = Vector3f.dot(normal, speed);
+        v1t = Vector3f.dot(tangent, speed);
+        v2n = Vector3f.dot(normal, ball.getSpeed());
+        v2t = Vector3f.dot(tangent, ball.getSpeed());
+
+        nv1 = v1n*(mass - ball.getMass()) + 2 *ball.getMass()*v2n;
+        nv1 /= mass + ball.getMass();
+        nv2 = v2n*(ball.getMass() - mass) + 2*mass*v1n;
+        nv2 /= mass + ball.getMass();
+
+        float moveDistance = collisionDistance - dist/2;
+        Vector3f moveVector = new Vector3f();
+        normal.normalise();
+        moveVector.set(normal);
+        moveVector.scale(moveDistance);
+        Vector3f.add(location, moveVector, location);
+        Vector3f.add(ball.getLocation(), (Vector3f) moveVector.negate(), ball.getLocation());
+
+
+        normal.normalise();
+        normal.scale(nv1);
+        tangent.scale(v1t);
+        Vector3f.add(normal,tangent,normal);
+        setSpeed(normal);
+
+        normal.normalise();
+        tangent.normalise();
+        normal.scale(nv2);
+        tangent.scale(v2t);
+        Vector3f.add(normal,tangent,normal);
+        ball.setSpeed(normal);
+        
+    }
+
+    private boolean checkBallCollisions(Ball ball) {
+        Vector3f dist = new Vector3f();
+        Vector3f check = new Vector3f();
+        Vector3f.sub(location,ball.getLocation(),dist);
+        
+        if (dist.length() < radius + collisionDistance){
+            applyBallCollision(dist,ball);
+            return true;
+        }
+        return false;
     }
     
     private void addToGrid(){
@@ -277,7 +336,7 @@ public class Ball extends Sphere{
     }
 
     public void setSpeed(Vector3f speed) {
-        this.speed = speed;
+        this.speed.set(speed);
     }
 
     public void accelerate(float x,float y,float z){
@@ -302,5 +361,9 @@ public class Ball extends Sphere{
 
      public Texture getTexture() {
         return texture;
+    }
+
+    public float getMass() {
+        return mass;
     }
 }
