@@ -136,15 +136,17 @@ public class Ball extends Sphere{
         shortestDistance = 2f;
         for (Wall wall : collisionWalls) {
             newDistance = distanceFromWall(wall.getVector(), wall.getEnd());
-            if (newDistance < shortestDistance){
-                shortestDistance = newDistance;
-                collisionWall = wall;
+            if (newDistance < collisionDistance && newDistance < shortestDistance){
+                if (collisionPointInWall(wall, newDistance) == true){
+                    System.out.println(newDistance);
+                    shortestDistance = newDistance;
+                    collisionWall = wall;
+                }
             }
         }
         if (collisionWall != null){
-            if (checkWallCollision(collisionWall, shortestDistance) == true) {
-                return;
-            }
+            applyWallCollision(collisionWall, shortestDistance);
+            return;
         }
         
     }
@@ -176,31 +178,25 @@ public class Ball extends Sphere{
         direction.scale(Math.abs(help));
         accelerate(direction);
     }
-    private boolean checkWallCollision(Wall wall, float distance){
+    private boolean collisionPointInWall(Wall wall, float distance){
         boolean check = true;
         
-        if (distance < collisionDistance) {
-            Vector3f collisionPoint = new Vector3f();
-            Vector3f normal = new Vector3f();
-            normal.set(wall.getNormal());
-            collisionPoint.set(normal);
-            collisionPoint.scale(distance);
-            Vector3f cornerDist = new Vector3f();
-            Vector3f cornerDist1 = new Vector3f();
-            System.out.println("CollisionP: " + collisionPoint.length());
-            Vector3f.sub(location, collisionPoint, collisionPoint);
-            Vector3f.sub(collisionPoint,wall.getEnd(),cornerDist);
-            Vector3f.sub(collisionPoint,wall.getBeginning(),cornerDist1);
-            
-            if (cornerDist.length() > wall.getVector().length()) check = false;
-            else if(cornerDist1.length() > wall.getVector().length()) check = false;
-                       
-            if (check){
-                //We have to use the set command because otherwise we would be actually altering the wall's normal.
-                normal.set(wall.getNormal());
-                applyWallCollision(normal, distance);
-                return true;
-            }
+        Vector3f collisionPoint = new Vector3f();
+        Vector3f cornerDist = new Vector3f();
+        Vector3f cornerDist1 = new Vector3f();
+        //We have to use the set command because otherwise we would be actually altering the wall's normal.
+        collisionPoint.set(wall.getNormal());
+        collisionPoint.scale(distance);
+//        System.out.println("CollisionP: " + collisionPoint.length());
+        Vector3f.sub(location, collisionPoint, collisionPoint);
+        Vector3f.sub(collisionPoint,wall.getEnd(),cornerDist);
+        Vector3f.sub(collisionPoint,wall.getBeginning(),cornerDist1);
+
+        if (cornerDist.length() > wall.getVector().length()) check = false;
+        else if(cornerDist1.length() > wall.getVector().length()) check = false;
+
+        if (check == true){
+            return true;
         }
         return false;
     }
@@ -221,7 +217,9 @@ public class Ball extends Sphere{
         return dist;
     }
     
-    private void applyWallCollision(Vector3f normal, float distance){
+    private void applyWallCollision(Wall wall, float distance){
+        Vector3f normal = new Vector3f();
+        normal.set(wall.getNormal());
         System.out.println("WALLcollide");
         float help;
         float moveDistance = collisionDistance - distance;
