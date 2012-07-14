@@ -96,7 +96,9 @@ public class Ball extends Sphere{
     private void checkCollisions(){
         HashSet<Ball> collisionBalls = new HashSet();
         HashSet<Wall> collisionWalls = new HashSet();
+        Wall collisionWall = null;
         HashSet<Corner> collisionCorners = new HashSet();
+        float shortestDistance, newDistance;
         
         //First find all the objects this thing even could collide with!
         for (int x = gridX - 2; x < gridX + 2; x++){
@@ -125,11 +127,20 @@ public class Ball extends Sphere{
                 return;
             }
         }
+        shortestDistance = 2f;
         for (Wall wall : collisionWalls) {
-            if(checkWallCollision(wall) == true){
+            newDistance = distanceFromWall(wall.getVector(), wall.getEnd());
+            if (newDistance < shortestDistance){
+                shortestDistance = newDistance;
+                collisionWall = wall;
+            }
+        }
+        if (collisionWall != null){
+            if (checkWallCollision(collisionWall, shortestDistance) == true) {
                 return;
             }
         }
+        
     }
     private boolean checkCornerCollision(Corner corner){
         Vector3f direction = new Vector3f();
@@ -153,17 +164,21 @@ public class Ball extends Sphere{
         direction.scale(Math.abs(help));
         accelerate(direction);
     }
-    private boolean checkWallCollision(Wall wall){
-        float distance,test1,test2;
+    private boolean checkWallCollision(Wall wall, float distance){
         boolean check = true;
-        distance = distanceFromWall(wall.getVector(), wall.getEnd());
+        
         if (distance < collisionDistance) {
-            Vector3f normal = new Vector3f();            
+            Vector3f collisionPoint = new Vector3f();
+            Vector3f normal = new Vector3f();
+            normal.set(wall.getNormal());
+            collisionPoint.set(normal);
+            collisionPoint.scale(distance);
             Vector3f cornerDist = new Vector3f();
             Vector3f cornerDist1 = new Vector3f();
-            
-            Vector3f.sub(location,wall.getEnd(),cornerDist);
-            Vector3f.sub(location,wall.getBeginning(),cornerDist1);
+            System.out.println(collisionPoint.length());
+            Vector3f.sub(location, collisionPoint, collisionPoint);
+            Vector3f.sub(collisionPoint,wall.getEnd(),cornerDist);
+            Vector3f.sub(collisionPoint,wall.getBeginning(),cornerDist1);
             
             if (cornerDist.length() > wall.getVector().length()) check = false;
             else if(cornerDist1.length() > wall.getVector().length()) check = false;
