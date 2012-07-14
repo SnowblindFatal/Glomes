@@ -26,6 +26,11 @@ id = 1
 material = metal
 vertice = (141.5, 20; 158.5, 20; 170, 70; 130, 70;)
 
+[OBSTACLE]
+id = 1
+material = metal
+vertice = (50, 30; 50.5, 30.5; 51, 40; 49.7, 30.004;)
+
 
 [POWER_PLANT]
 id= 0
