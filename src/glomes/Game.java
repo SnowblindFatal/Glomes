@@ -20,10 +20,11 @@ import org.lwjgl.util.vector.Vector3f;
 public class Game extends GameStateTemplate {
     private boolean quitBoolean;
     private Ball ball;
-    private float mouseX, mouseY;
+    private float mouseX, mouseY, dTime;
     private int speed = 0;
     private GridSquare[][] grid;
     private Map map;
+    private double time, timeNew;
     
     private Vector3f camera;
 
@@ -33,21 +34,29 @@ public class Game extends GameStateTemplate {
     
     @Override
     public void use(){
-        
+        int drawNow = 0;
+        dTime = 0;
         quitBoolean = false;
         map = game.getMap();
         grid = map.getGrid();
         camera = new Vector3f(0f, 0f, -60f);
         
         System.out.println("moved to game");
+        time();
         while (quitBoolean == false){
-            input();            
-            draw();
+            time();
+            input();     
+            map.update(dTime);
             //quitBoolean = true;
             if (Display.isCloseRequested()) {
                 quitBoolean = true;
             }            
-            Display.sync(60);
+            drawNow++;
+            if (drawNow >= 10){
+                draw();
+                drawNow = 0;
+            }
+            Display.sync(600);
         }
     }
 
@@ -60,31 +69,31 @@ public class Game extends GameStateTemplate {
             ball = new Ball(camera, grid);
             Vector3f v = new Vector3f(mouseX,mouseY,0.0f);
             v.normalise();
-            v.scale((float) speed / 30);
+            v.scale((float) speed / 300);
             ball.setSpeed(v);
             System.out.println("Speed: " + speed);
             map.addBall(ball);
             speed = 0;
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)){
-            camera.setX(camera.getX() + 1.1f);
+            camera.setX(camera.getX() + dTime * 0.1f);
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
-            camera.setX(camera.getX() - 1.1f);
+            camera.setX(camera.getX() - dTime * 0.1f);
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
-            camera.setY(camera.getY() + 1.1f);
+            camera.setY(camera.getY() + dTime * 0.1f);
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_UP)) {
-            camera.setY(camera.getY() - 1.1f);
+            camera.setY(camera.getY() - dTime * 0.1f);
         }
         
         //Page up and down:
         if (Keyboard.isKeyDown(Keyboard.KEY_NEXT)) {
-            camera.setZ(camera.getZ() - 1.1f);
+            camera.setZ(camera.getZ() - dTime * 0.1f);
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_PRIOR)) {
-            camera.setZ(camera.getZ() + 1.1f);
+            camera.setZ(camera.getZ() + dTime * 0.1f);
         }
         
         float factor = 5f;
@@ -93,16 +102,16 @@ public class Game extends GameStateTemplate {
         }
         
         if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
-            map.accelerateBall(0, 0.001f * factor, 0);
+            map.accelerateBall(0, dTime * 0.0001f * factor, 0);
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
-            map.accelerateBall(0, -0.001f * factor, 0);
+            map.accelerateBall(0, dTime * -0.0001f * factor, 0);
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
-            map.accelerateBall(-0.001f * factor, 0, 0);
+            map.accelerateBall(dTime * -0.0001f * factor, 0, 0);
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
-            map.accelerateBall(0.001f * factor, 0, 0);
+            map.accelerateBall(dTime * 0.0001f * factor, 0, 0);
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_Z)) {
             map.stopBall();
@@ -122,9 +131,15 @@ public class Game extends GameStateTemplate {
         GL11.glLoadIdentity();                          // Reset The Current Modelview Matrix
         GL11.glRotatef(0.0f, 0.0f, 0.0f, 0.0f);
         GL11.glTranslatef(camera.getX(), camera.getY(), camera.getZ());
-        map.update();
-        map.draw();
+        
+        map.draw(dTime);
         
         Display.update();
+    }
+    private void time() {
+        timeNew = System.nanoTime();
+        dTime = (float) (timeNew - time);
+        dTime /= 1000000f; //Convert to milliseconds.
+        time = timeNew;
     }
 }

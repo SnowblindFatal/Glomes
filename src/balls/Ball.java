@@ -68,8 +68,8 @@ public class Ball extends Sphere{
         GL11.glEndList();
     }
 
-    public void draw(){
-        Vector4f v1 = new Vector4f(speed.getY(), -speed.getX(), speed.getZ(), speed.length());
+    public void draw(float dTime){
+        Vector4f v1 = new Vector4f(speed.getY() * dTime, -speed.getX() * dTime, speed.getZ() * dTime, speed.length() * dTime);
 
         My_Quaternion quaternion = new My_Quaternion();
         quaternion.setFromAxisAngle(v1);
@@ -92,9 +92,11 @@ public class Ball extends Sphere{
         GL11.glPopMatrix();
     }
 
-    public void update(){
-        
-        Vector3f.add(location, speed, location);
+    public void update(float dTime){
+//        Vector3f.add(location, speed, location);
+        location.setX(location.getX() + speed.getX() * dTime);
+        location.setY(location.getY() + speed.getY() * dTime);
+        location.setZ(location.getZ() + speed.getZ() * dTime);
         updateGridPosition();
         checkCollisions();       
     }

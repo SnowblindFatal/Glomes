@@ -158,7 +158,7 @@ public class Menu extends GameStateTemplate {
         GL11.glLoadIdentity();                          // Reset The Current Modelview Matrix
         GL11.glRotatef(rtri, 0.0f, 0.0f, 0.0f);
         GL11.glTranslatef(0f, 0.0f, -10.0f);
-        game.getMap().draw();
+//        game.getMap().draw();
         
         
         

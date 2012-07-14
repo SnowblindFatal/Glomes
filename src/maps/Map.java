@@ -71,18 +71,18 @@ public class Map {
         }
     }
     
-    public void update(){
+    public void update(float dTime){
         for (Ball ball : balls) {
-            ball.update();
+            ball.update(dTime);
         }
     }
     
-    public void draw(){
+    public void draw(float dTime){
         for (Obstacle obstacle : obstacles){
             obstacle.draw();
         }
         for (Ball ball : balls){
-            ball.draw();
+            ball.draw(dTime);
         }
     }
     public GridSquare[][] getGrid(){
