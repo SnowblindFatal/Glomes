@@ -24,14 +24,14 @@ import org.newdawn.slick.opengl.TextureLoader;
  * @author Jusku
  */
 public class Ball extends Sphere{
-    private final int slices = 32;
+    private final int slices = 20;
     private final float radius = 1.0f;
     private final float collisionDistance = radius + 0.0f;
     private Vector3f speed, location, camera;
     private Texture texture;
     private GridSquare[][] grid;
     private GridSquare currentSquare;
-    private int gridX, gridY;
+    private int gridX, gridY, displayListIndex;
 
     private ByteBuffer tmp = ByteBuffer.allocateDirect(16*4);
     private FloatBuffer rotationMatrix;
@@ -60,6 +60,10 @@ public class Ball extends Sphere{
         }catch(Exception e){
             e.printStackTrace(System.out);
         }
+        displayListIndex = GL11.glGenLists(1);
+        GL11.glNewList(displayListIndex, GL11.GL_COMPILE); // Start With The List.
+        this.draw(radius, slices, slices);
+        GL11.glEndList();
     }
 
     public void draw(){
@@ -82,7 +86,7 @@ public class Ball extends Sphere{
 
         GL11.glTranslatef(location.getX() + camera.getX(), location.getY() + camera.getY(), location.getZ() + camera.getZ());
         GL11.glMultMatrix(rotationMatrix);
-        draw(radius, slices, slices);
+        GL11.glCallList(displayListIndex);
         GL11.glPopMatrix();
     }
 
