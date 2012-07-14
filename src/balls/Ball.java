@@ -26,7 +26,7 @@ import org.newdawn.slick.opengl.TextureLoader;
 public class Ball extends Sphere{
     private final int slices = 32;
     private final float radius = 1.0f;
-    private final float collisionDistance = radius + 0.1f;
+    private final float collisionDistance = radius + 0.0f;
     private Vector3f speed, location, camera;
     private Texture texture;
     private GridSquare[][] grid;
@@ -101,20 +101,26 @@ public class Ball extends Sphere{
         float shortestDistance, newDistance;
         
         //First find all the objects this thing even could collide with!
-        for (int x = gridX - 2; x < gridX + 2; x++){
-            for (int y = gridY - 2; y < gridY + 2; y++){
-                if (grid[x][y].hasItems() == true){
-                    for (Corner newCorner : grid[x][y].getCorners()){
-                        collisionCorners.add(newCorner);
-                    }
-                    for (Wall newWall : grid[x][y].getWalls()) {
-                        collisionWalls.add(newWall);
-                    }
-                    for (Ball newBall : grid[x][y].getBalls()) {
-                        if (newBall != this){
-                            collisionBalls.add(newBall);
+        for (int x = gridX - 3; x < gridX + 3; x++){
+            for (int y = gridY - 3; y < gridY + 3; y++){
+                try {
+                    if (grid[x][y].hasItems() == true){
+                        for (Corner newCorner : grid[x][y].getCorners()){
+                            collisionCorners.add(newCorner);
+                        }
+                        for (Wall newWall : grid[x][y].getWalls()) {
+                            collisionWalls.add(newWall);
+                        }
+                        for (Ball newBall : grid[x][y].getBalls()) {
+                            if (newBall != this){
+                                collisionBalls.add(newBall);
+                            }
                         }
                     }
+                } catch (Exception ex) {
+                    System.out.println("Ball too near edge!!");
+                    Logger.getLogger(Ball.class.getName()).log(Level.SEVERE, null, ex);
+                    System.exit(2003);
                 }
             }
         }
@@ -147,20 +153,26 @@ public class Ball extends Sphere{
         Vector3f.sub(location, corner.getLocation(), direction);
         //Corner's Z is 0f, Ball's Z is ball.radius. We don't care about Z so...
         direction.setZ(0f);
+        float distance = direction.length();
 //        System.out.println(direction.length());
-        if (direction.length() < collisionDistance){
-            applyCornerCollision(direction);
+        if (distance < collisionDistance){
+            applyCornerCollision(direction, distance);
             return true;
         }
         return false;
     }
-    private void applyCornerCollision(Vector3f direction){
+    private void applyCornerCollision(Vector3f direction, float distance){
         System.out.println("cornercollide");
         float help;
+        float moveDistance = collisionDistance - distance;
+        Vector3f moveVector = new Vector3f();
         help = (float) Math.cos(Vector3f.angle(speed, direction));
         help *= speed.length();
         help *= 2;
         direction.normalise();
+        moveVector.set(direction);
+        moveVector.scale(moveDistance);
+        Vector3f.add(location, moveVector, location);
         direction.scale(Math.abs(help));
         accelerate(direction);
     }
@@ -175,7 +187,7 @@ public class Ball extends Sphere{
             collisionPoint.scale(distance);
             Vector3f cornerDist = new Vector3f();
             Vector3f cornerDist1 = new Vector3f();
-            System.out.println(collisionPoint.length());
+            System.out.println("CollisionP: " + collisionPoint.length());
             Vector3f.sub(location, collisionPoint, collisionPoint);
             Vector3f.sub(collisionPoint,wall.getEnd(),cornerDist);
             Vector3f.sub(collisionPoint,wall.getBeginning(),cornerDist1);
@@ -186,7 +198,7 @@ public class Ball extends Sphere{
             if (check){
                 //We have to use the set command because otherwise we would be actually altering the wall's normal.
                 normal.set(wall.getNormal());
-                applyWallCollision(normal);
+                applyWallCollision(normal, distance);
                 return true;
             }
         }
@@ -209,13 +221,20 @@ public class Ball extends Sphere{
         return dist;
     }
     
-    private void applyWallCollision(Vector3f normal){
+    private void applyWallCollision(Vector3f normal, float distance){
         System.out.println("WALLcollide");
         float help;
+        float moveDistance = collisionDistance - distance;
+//        System.out.println("mutliplierlength: " + moveDistance);
+        Vector3f moveVector = new Vector3f();
         help = (float) Math.cos(Vector3f.angle(speed, normal));
         help *= speed.length();
         help *= 2;
+        moveVector.set(normal);
         normal.scale(Math.abs(help));
+        moveVector.scale(moveDistance);
+//        System.out.println("Vectorlength: " + moveVector.length());
+        Vector3f.add(location, moveVector, location);
         accelerate(normal);
     }
     
@@ -243,7 +262,7 @@ public class Ball extends Sphere{
             currentSquare.removeBall(this);
         } catch (Exception ex) {
             Logger.getLogger(Ball.class.getName()).log(Level.SEVERE, null, ex);
-            System.exit(1001);
+            System.exit(2002);
         }
     }
     

@@ -129,7 +129,7 @@ public class Wall {
                 square.removeWall(this);
             } catch (Exception ex) {
                 Logger.getLogger(Wall.class.getName()).log(Level.SEVERE, null, ex);
-                System.exit(1002);
+                System.exit(1001);
             }
         }
         squaresOccupied.clear();
@@ -142,7 +142,7 @@ public class Wall {
         }catch(Exception ex){
             System.out.println("Wall out of boundaries! A map vertex is outside the playable map area.");
             Logger.getLogger(Wall.class.getName()).log(Level.SEVERE, null, ex);
-            System.exit(2002);
+            System.exit(1002);
         }
         
         squaresOccupied.add(grid[x][y]);
