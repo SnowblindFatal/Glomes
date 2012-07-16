@@ -25,15 +25,14 @@ import org.newdawn.slick.opengl.TextureLoader;
  */
 public class Ball extends Sphere{
     private final int slices = 20;
-    private final float radius = 1.0f;
-    private final float collisionDistance = radius + 0.0f;
+    private final float radius = 1.0f;    
     private final float mass = 1.0f;
 
     private Vector3f speed, speedCompound, location, camera;
     private Texture texture;
     private GridSquare[][] grid;
     private GridSquare currentSquare;
-    private int gridX, gridY, displayListIndex;
+    private int gridX, gridY, displayListIndex;    
 
     private ByteBuffer tmp = ByteBuffer.allocateDirect(16*4);
     private FloatBuffer rotationMatrix;
@@ -138,7 +137,7 @@ public class Ball extends Sphere{
         shortestDistance = 2f;
         for (Wall wall : collisionWalls) {
             newDistance = distanceFromWall(wall.getVector(), wall.getEnd());
-            if (newDistance < collisionDistance && newDistance < shortestDistance) {
+            if (newDistance < radius && newDistance < shortestDistance) {
                 if (collisionPointInWall(wall, newDistance) == true) {
                     shortestDistance = newDistance;
                     collisionWall = wall;
@@ -157,9 +156,6 @@ public class Ball extends Sphere{
         for (Ball ball : collisionBalls) {
             if (checkBallCollisions(ball)) return;
         }
-
-
-        
     }
     private boolean checkCornerCollision(Corner corner){
         Vector3f direction = new Vector3f();
@@ -168,7 +164,7 @@ public class Ball extends Sphere{
         direction.setZ(0f);
         float distance = direction.length();
 //        System.out.println(direction.length());
-        if (distance < collisionDistance){
+        if (distance < radius){
             applyCornerCollision(direction, distance);
             return true;
         }
@@ -177,7 +173,7 @@ public class Ball extends Sphere{
     private void applyCornerCollision(Vector3f direction, float distance){
         System.out.println("cornercollide");
         float help;
-        float moveDistance = collisionDistance - distance;
+        float moveDistance = radius - distance;
         Vector3f moveVector = new Vector3f();
         direction.normalise();
         moveVector.set(direction);
@@ -237,7 +233,7 @@ public class Ball extends Sphere{
         normal.set(wall.getNormal());
         System.out.println("WALLcollide");
         float help;
-        float moveDistance = collisionDistance - distance;
+        float moveDistance = radius - distance;
 //        System.out.println("mutliplierlength: " + moveDistance);
         Vector3f moveVector = new Vector3f();
         moveVector.set(normal);
@@ -254,43 +250,48 @@ public class Ball extends Sphere{
 
     private void applyBallCollision(Vector3f normal,Ball ball){
         System.out.println("BallCollide");
-        Vector3f tangent = new Vector3f();
-        float v1n,v1t,v2n,v2t,nv1,nv2,dist = normal.length();
+        Vector3f n1 = new Vector3f(),n2 = new Vector3f(),
+                 t1 = new Vector3f(), t2 = new Vector3f(),
+                 tangent = new Vector3f();
+        float moveDistance = radius - normal.length() / 2, nv1,nv2;
         normal.normalise();
-        tangent.set(-normal.getY(), normal.getX());
-        
-        v1n = Vector3f.dot(normal, speed);
-        v1t = Vector3f.dot(tangent, speed);
-        v2n = Vector3f.dot(normal, ball.getSpeed());
-        v2t = Vector3f.dot(tangent, ball.getSpeed());
+        tangent.set(-normal.getY(),normal.getX());
 
-        nv1 = v1n*(mass - ball.getMass()) + 2 *ball.getMass()*v2n;
-        nv1 /= mass + ball.getMass();
-        nv2 = v2n*(ball.getMass() - mass) + 2*mass*v1n;
-        nv2 /= mass + ball.getMass();
+        //Speeds are projected to normal and tangent.
+        float len1 = Vector3f.dot(speed, normal),
+              len2 = Vector3f.dot(ball.getSpeed(), normal),
+              len3 = Vector3f.dot(speed, tangent),
+              len4 = Vector3f.dot(ball.getSpeed(), tangent);
 
-        float moveDistance = collisionDistance - dist/2;
         Vector3f moveVector = new Vector3f();
-        normal.normalise();
         moveVector.set(normal);
         moveVector.scale(moveDistance);
         Vector3f.add(location, moveVector, location);
-        Vector3f.add(ball.getLocation(), (Vector3f) moveVector.negate(), ball.getLocation());
+        moveVector.negate();
+        Vector3f.add(ball.getLocation(),moveVector,ball.getLocation());
 
-
-        normal.normalise();
-        normal.scale(nv1);
-        tangent.scale(v1t);
-        Vector3f.add(normal,tangent,normal);
-        setSpeed(normal);
-
-        normal.normalise();
-        tangent.normalise();
-        normal.scale(nv2);
-        tangent.scale(v2t);
-        Vector3f.add(normal,tangent,normal);
-        ball.setSpeed(normal);
+        n1.set(normal);
+        n2.set(normal);
+        t1.set(tangent);
+        t2.set(tangent);
         
+        //New speed in the normals direction. Note that if masses are equal the
+        //speeds just flip. In the tangent's direction they stay the same.
+        nv1 = len1*(mass - ball.getMass()) + 2*ball.getMass()*len2;
+        nv1 /= mass + ball.getMass();
+        nv2 = len2*(ball.getMass() - mass) + 2*mass*len1;
+        nv2 /= mass + ball.getMass();
+        
+        n1.scale(nv1);
+        n2.scale(nv2);
+        t1.scale(len3);
+        t2.scale(len4);
+
+        Vector3f.add(n1,t1,n1);
+        Vector3f.add(n2, t2, n2);
+                
+        setSpeed(n1);
+        ball.setSpeed(n2);
     }
 
     private boolean checkBallCollisions(Ball ball) {
@@ -298,7 +299,7 @@ public class Ball extends Sphere{
         Vector3f check = new Vector3f();
         Vector3f.sub(location,ball.getLocation(),dist);
         
-        if (dist.length() < radius + collisionDistance){
+        if (dist.length() < ball.getRadius() + radius){
             applyBallCollision(dist,ball);
             return true;
         }

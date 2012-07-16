@@ -34,7 +34,7 @@ public class Game extends GameStateTemplate {
     
     @Override
     public void use(){
-        int drawNow = 0;
+        float drawNow = 0;
         dTime = 0;
         quitBoolean = false;
         map = game.getMap();
@@ -51,8 +51,8 @@ public class Game extends GameStateTemplate {
             if (Display.isCloseRequested()) {
                 quitBoolean = true;
             }            
-            drawNow++;
-            if (drawNow >= 10){
+            drawNow+=dTime;
+            if (drawNow >= 0.015){
                 draw();
                 drawNow = 0;
             }

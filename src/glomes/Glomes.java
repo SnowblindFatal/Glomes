@@ -4,7 +4,6 @@
  */
 package glomes;
 
-import de.matthiasmann.twl.renderer.lwjgl.LWJGLRenderer;
 import java.util.ArrayList;
 import java.util.Stack;
 import maps.Map;
