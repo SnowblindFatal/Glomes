@@ -9,6 +9,7 @@ import java.util.Stack;
 import maps.Map;
 import maps.MapData;
 import misc.MapLoader;
+import misc.Model;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
@@ -116,7 +117,7 @@ public class Glomes {
         mapData = mapLoader.loadMap("cfg/mapdata/test map.umf");
         newMap = new Map(mapData);
         maps.add(newMap);
-        //TODO: make a loop that goes through all *.umf (ultimate map format) files in the mapdata folder.
+        //TODO: make a loop that goes through all *.umf (ultimate map format) files in the mapdata folder.        
     }
     public Map getMap(){
         return maps.get(0);

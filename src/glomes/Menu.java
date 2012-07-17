@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import misc.Model;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
@@ -63,6 +64,9 @@ public class Menu extends GameStateTemplate {
         convexiser = new Convexiser();
         polygon = new ArrayList();
         triangles = new ArrayList();
+
+        Model model = new Model();
+        model.load("res/test/cube.obj");
         //Save this for now:
         try {
             customTexture = TextureLoader.getTexture("BMP", ResourceLoader.getResourceAsStream("/res/test/Mud.bmp"));
@@ -73,7 +77,11 @@ public class Menu extends GameStateTemplate {
         while (quitBoolean == false){
             GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
             draw(); // Draw my own stuff first so the gui will be in front of everything.
-            
+            GL11.glLoadIdentity();
+            GL11.glTranslatef(0f, 0f, -5f);
+            GL11.glTranslatef(1f, 0f, -5f);
+            GL11.glRotatef(30f, 1f, 1f, 0f);
+            model.draw();
             //Since we want to handle the input ourselves, we can't just call gui.update().
             //This is why we separately do everything gui.update() does except for the input
             //handling.
