@@ -9,7 +9,6 @@ import java.util.Stack;
 import maps.Map;
 import maps.MapData;
 import misc.MapLoader;
-import misc.Model;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;

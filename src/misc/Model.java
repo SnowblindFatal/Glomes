@@ -111,19 +111,23 @@ public class Model {
     }
 
     private void readPolygonInfo(String[] str){
-        int i = 0,j = 0,neg = (int) '0';
+        int i,j = 0,k = 0;
+        String help = "";
+        //char test = ' ';
         int[] values = new int[9];
         for (i = 1;i < 4;i++) {
-            values[j++] = (int)str[i].charAt(0)-neg;
-            values[j++] = (int)str[i].charAt(2)-neg;
-            values[j++] = (int)str[i].charAt(4)-neg;
+            for (k = 0;k < str[i].length();k++){
+                if (Character.isDigit(str[i].charAt(k))){
+                    help += str[i].charAt(k);
+                } else if(str[i].charAt(k) == '/'){
+                    values[j++] = Integer.parseInt(help);
+                    help = "";
+                }
+            }
+            values[j++] = Integer.parseInt(help);
+            help = "";
         }
         polygonMaker.add(values);
-    }
-
-    public void draw(){
-        texture.bind();
-        GL11.glCallList(dlIndex);
     }
 
     private void createDisplayList() {
@@ -135,10 +139,10 @@ public class Model {
 
         Vector3f help = new Vector3f();        
         GL11.glNewList(dlIndex, GL11.GL_COMPILE);        
-        for (int i = 0;i < polygonMaker.size();i++){
-            help = normals.get(polygonMaker.get(i)[2]-1);
-            GL11.glNormal3f(help.getX(),help.getY(),help.getZ());
+        for (int i = 0;i < polygonMaker.size();i++){            
             GL11.glBegin(GL11.GL_TRIANGLES);
+            help = normals.get(polygonMaker.get(i)[2]-1);            
+            GL11.glNormal3f(help.getX(),help.getY(),help.getZ());
             for (int j = 0;j < 3;j++){
                 help = tCoords.get(polygonMaker.get(i)[3*j+1]-1);
                 GL11.glTexCoord2f(help.getX(), help.getY());
@@ -148,5 +152,10 @@ public class Model {
             GL11.glEnd();
         }
         GL11.glEndList();
+    }
+
+    public void draw(){
+        texture.bind();
+        GL11.glCallList(dlIndex);
     }
 }
