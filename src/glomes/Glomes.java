@@ -4,16 +4,26 @@
  */
 package glomes;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Stack;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import maps.Map;
 import maps.MapData;
+import misc.HelperFunctions;
 import misc.MapLoader;
+import misc.Model;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
+import org.newdawn.slick.opengl.Texture;
+import org.newdawn.slick.opengl.TextureLoader;
+import org.newdawn.slick.util.ResourceLoader;
 
 /**
  *
@@ -42,6 +52,8 @@ public class Glomes {
         
         loadMaps();
         
+        loadTextures();
+        
         stateStack.push(menuState);
         stackHandler();
         
@@ -59,7 +71,6 @@ public class Glomes {
         //TODO: Replace with the perspective view mode can't remember whatsitcalled. Also probably redo this whole method.
 //        GL11.glOrtho(0, currentResolution[0], 0, currentResolution[1], 1, -1);
 
-        
         
         GL11.glEnable(GL11.GL_TEXTURE_2D); // Enable Texture Mapping
         GL11.glShadeModel(GL11.GL_SMOOTH); // Enable Smooth Shading
@@ -118,6 +129,39 @@ public class Glomes {
         maps.add(newMap);
         //TODO: make a loop that goes through all *.umf (ultimate map format) files in the mapdata folder.        
     }
+    
+    private void loadTextures() {
+        HashMap<String, Texture> textureMap = new HashMap();
+        Texture texture;
+        //TODO: change the folder to res/textures/
+        File folder = new File("res/test/");
+        File[] files = folder.listFiles();
+        String fileName = "";
+        for (int i = 0; i < files.length; i++) {
+
+            if (files[i].isFile()) {
+                fileName = files[i].getName();
+            }
+            try {
+                if (fileName.substring(fileName.length() - 4).equalsIgnoreCase(".jpg")) {
+                    texture = TextureLoader.getTexture("JPG", ResourceLoader.getResourceAsStream("res/test/" + fileName));
+                } else if (fileName.substring(fileName.length() - 4).equalsIgnoreCase(".png")) {
+                    texture = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/test/" + fileName));
+                } else if (fileName.substring(fileName.length() - 4).equalsIgnoreCase(".bmp")) {
+                    texture = TextureLoader.getTexture("BMP", ResourceLoader.getResourceAsStream("res/test/" + fileName));
+                } else {
+                    continue;
+                }
+                textureMap.put(fileName, texture);
+                textureMap.put("res/test/" + fileName, texture);
+
+            } catch (IOException ex) {
+                Logger.getLogger(Model.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        Statics.setTextures(textureMap);
+    }
+    
     public Map getMap(){
         return maps.get(0);
     }
