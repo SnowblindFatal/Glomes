@@ -91,7 +91,7 @@ public class Map {
 
         GL11.glTexCoord2f(
                 10f * widthFactor, 
-                10f * heightFactor);
+                - 10f * heightFactor);
         GL11.glVertex3f(
                 10f, 
                 10f, 
@@ -99,7 +99,7 @@ public class Map {
         
         GL11.glTexCoord2f(
                 (float) (xSize - 20) * widthFactor, 
-                10f * heightFactor);
+                - 10f * heightFactor);
         GL11.glVertex3f(
                 (float) (xSize - 20), 
                 10f, 
