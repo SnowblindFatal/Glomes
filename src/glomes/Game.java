@@ -20,7 +20,7 @@ import org.lwjgl.util.vector.Vector3f;
 public class Game extends GameStateTemplate {
     private boolean quitBoolean;
     private Ball ball;
-    private float mouseX, mouseY, dTime;
+    private float mouseX, mouseY, dTime, scaledTime;
     private float speed = 0;
     private GridSquare[][] grid;
     private Map map;
@@ -35,7 +35,9 @@ public class Game extends GameStateTemplate {
     @Override
     public void use(){
         float drawNow = 0;
+        int secondTest = 0;
         dTime = 0;
+        scaledTime = 0;
         quitBoolean = false;
         map = game.getMap();
         grid = map.getGrid();
@@ -46,16 +48,23 @@ public class Game extends GameStateTemplate {
         while (quitBoolean == false){
             time();
             input();     
-            map.update(dTime);
+            map.update(scaledTime);
             //quitBoolean = true;
             if (Display.isCloseRequested()) {
                 quitBoolean = true;
             }            
             drawNow+=dTime;
-            if (drawNow >= 0.015){
+            if (drawNow >= 16.67f){
                 draw();
-                drawNow = 0;
+                drawNow -= 16.67f;
             }
+            
+//            secondTest += 1;
+//            if (secondTest == 600){
+//                System.out.println("now");
+//                System.out.println(drawNow);
+//                secondTest -= 600;
+//            }
             Display.sync(600);
         }
     }
@@ -64,7 +73,7 @@ public class Game extends GameStateTemplate {
         if (Mouse.isButtonDown(0)){
             mouseX = Mouse.getX() - Display.getWidth() / 2;
             mouseY = (Mouse.getY() - Display.getHeight() / 2);
-            if (speed < 120) speed += dTime * 0.25;
+            if (speed < 120) speed += scaledTime * 0.25;
         }else if (speed != 0) {
             ball = new Ball(camera, grid);
             Vector3f v = new Vector3f(mouseX,mouseY,0.0f);
@@ -76,24 +85,24 @@ public class Game extends GameStateTemplate {
             speed = 0;
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)){
-            camera.setX(camera.getX() + dTime * 0.1f);
+            camera.setX(camera.getX() + scaledTime * 0.1f);
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
-            camera.setX(camera.getX() - dTime * 0.1f);
+            camera.setX(camera.getX() - scaledTime * 0.1f);
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
-            camera.setY(camera.getY() + dTime * 0.1f);
+            camera.setY(camera.getY() + scaledTime * 0.1f);
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_UP)) {
-            camera.setY(camera.getY() - dTime * 0.1f);
+            camera.setY(camera.getY() - scaledTime * 0.1f);
         }
         
         //Page up and down:
         if (Keyboard.isKeyDown(Keyboard.KEY_NEXT)) {
-            camera.setZ(camera.getZ() - dTime * 0.1f);
+            camera.setZ(camera.getZ() - scaledTime * 0.1f);
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_PRIOR)) {
-            camera.setZ(camera.getZ() + dTime * 0.1f);
+            camera.setZ(camera.getZ() + scaledTime * 0.1f);
         }
         
         float factor = 5f;
@@ -102,16 +111,16 @@ public class Game extends GameStateTemplate {
         }
         
         if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
-            map.accelerateBall(0, dTime * 0.0001f * factor, 0);
+            map.accelerateBall(0, scaledTime * 0.0001f * factor, 0);
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
-            map.accelerateBall(0, dTime * -0.0001f * factor, 0);
+            map.accelerateBall(0, scaledTime * -0.0001f * factor, 0);
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
-            map.accelerateBall(dTime * -0.0001f * factor, 0, 0);
+            map.accelerateBall(scaledTime * -0.0001f * factor, 0, 0);
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
-            map.accelerateBall(dTime * 0.0001f * factor, 0, 0);
+            map.accelerateBall(scaledTime * 0.0001f * factor, 0, 0);
         }
         if (Keyboard.isKeyDown(Keyboard.KEY_Z)) {
             map.stopBall();
@@ -132,7 +141,7 @@ public class Game extends GameStateTemplate {
         GL11.glRotatef(0.0f, 0.0f, 0.0f, 0.0f);
         GL11.glTranslatef(camera.getX(), camera.getY(), camera.getZ());
         
-        map.draw(dTime);
+        map.draw(scaledTime);
         
         Display.update();
     }
@@ -140,7 +149,10 @@ public class Game extends GameStateTemplate {
         timeNew = System.nanoTime();
         dTime = (float) (timeNew - time);
         dTime /= 1000000f; //Convert to milliseconds.
-        dTime *= Statics.GAME_SPEED;
+        if (dTime > 5f){
+            dTime = 5f;
+        }
+        scaledTime = dTime * Statics.GAME_SPEED;
         time = timeNew;
     }
 }
