@@ -9,10 +9,6 @@ import de.matthiasmann.twl.EditField;
 import de.matthiasmann.twl.GUI;
 import de.matthiasmann.twl.renderer.lwjgl.LWJGLRenderer;
 import de.matthiasmann.twl.theme.ThemeManager;
-import external.Convexiser;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import misc.Model;
@@ -20,10 +16,6 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.vector.Vector3f;
-import org.newdawn.slick.opengl.Texture;
-import org.newdawn.slick.opengl.TextureLoader;
-import org.newdawn.slick.util.ResourceLoader;
 
 /**
  *
@@ -42,11 +34,6 @@ public class Menu extends GameStateTemplate {
     
     //temp stuff for quick 3d testing:
     private float rtri, rquad;
-    private Convexiser convexiser;
-    private List<Vector3f> polygon;
-    private List<List<Vector3f>> triangles;
-    private Vector3f vector;
-    private Texture customTexture;
     
     
     
@@ -59,20 +46,9 @@ public class Menu extends GameStateTemplate {
         System.out.println("moved to menu");
         initTWL();
         
-        //TESTSTUFF:
-        //REMOVE THIS:
-        convexiser = new Convexiser();
-        polygon = new ArrayList();
-        triangles = new ArrayList();
 
         Model model = new Model();
         model.load("res/test/torus.obj");
-        //Save this for now:
-        try {
-            customTexture = TextureLoader.getTexture("BMP", ResourceLoader.getResourceAsStream("/res/test/Mud.bmp"));
-        } catch (IOException ex) {
-            Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
-        }
         
         while (quitBoolean == false){
             GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
@@ -166,37 +142,6 @@ public class Menu extends GameStateTemplate {
         GL11.glLoadIdentity();                          // Reset The Current Modelview Matrix
         GL11.glRotatef(rtri, 0.0f, 0.0f, 0.0f);
         GL11.glTranslatef(0f, 0.0f, -10.0f);
-//        game.getMap().draw();
-        
-        
-        
-//        GL11.glTranslatef(+1.5f, 0.0f, -6.0f);                // Move Left 1.5 Units And Into The Screen 6.0
-//        GL11.glRotatef(rtri, 0.0f, 1.0f, 0.0f);                // Rotate The Triangle On The Y axis ( NEW )
-//
-//        
-//        //Here, 64 pixels represent one unit in the game world. 
-//        //Try loading Mud.bmp or Glass.bmp to see the effect.
-//        float heightfactor = -128f / customTexture.getTextureHeight();
-//        float widthfactor = 128f / customTexture.getTextureWidth();
-//        customTexture.bind();
-//        
-//        GL11.glBegin(GL11.GL_POLYGON);
-//        //Texture's X and Y coordinates are the same as those of the actual vertex, 
-//        //only the first are multiplied by a set number.
-//        GL11.glTexCoord2f(2f * widthfactor, 0f * heightfactor);
-//        GL11.glVertex3f(2f, 0f, -2f);
-//        GL11.glTexCoord2f(2f * widthfactor, 2f * heightfactor);
-//        GL11.glVertex3f(2f, 2f, -2f);
-//        GL11.glTexCoord2f(1f * widthfactor, 1.5f * heightfactor);
-//        GL11.glVertex3f(1f, 1.5f, -2f);
-//        GL11.glTexCoord2f(0f * widthfactor, 2f * heightfactor);
-//        GL11.glVertex3f(0f, 2f, -2f);
-//        GL11.glTexCoord2f(0.0f * widthfactor, 0.0f * heightfactor);
-//        GL11.glVertex3f(0f, 0f, -2f);
-//        GL11.glEnd();
-//
-        rtri += 0.04f;                                       // Increase The Rotation Variable For The Triangle ( NEW )
-        rquad -= 2f;                                 // Decrease The Rotation Variable For The Quad     ( NEW )
     }
     
     private void initTWL(){

@@ -1,6 +1,6 @@
 package balls;
 
-import java.io.FileInputStream;
+import glomes.Statics;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -17,7 +17,6 @@ import org.lwjgl.util.glu.Sphere;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 import org.newdawn.slick.opengl.Texture;
-import org.newdawn.slick.opengl.TextureLoader;
 
 /**
  *
@@ -56,12 +55,7 @@ public class Ball extends Sphere{
         rotation.setIdentity();
         setNormals(GLU.GLU_SMOOTH);
         setTextureFlag(true);
-        try{
-            texture = TextureLoader.getTexture("BMP",
-                                    new FileInputStream("res/test/Glass.bmp"));
-        }catch(Exception e){
-            e.printStackTrace(System.out);
-        }
+        texture = Statics.textureMap.get("res/test/Glass.bmp");
         displayListIndex = GL11.glGenLists(1);
         GL11.glNewList(displayListIndex, GL11.GL_COMPILE); // Start With The List.
         this.draw(radius, slices, slices);

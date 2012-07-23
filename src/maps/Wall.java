@@ -5,15 +5,12 @@
 package maps;
 
 import glomes.Statics;
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.opengl.Texture;
-import org.newdawn.slick.opengl.TextureLoader;
-import org.newdawn.slick.util.ResourceLoader;
 
 /**
  *
@@ -41,6 +38,9 @@ public class Wall {
         material = newMaterial;
         grid = newGrid;
         occupyGrid();
+        
+        wallTexture = Statics.textureMap.get("res/test/wall_tiles_013.png");
+        
         generateNormal();
         generateDisplayList();
     }
@@ -149,12 +149,6 @@ public class Wall {
     }
     
     private void generateDisplayList(){
-        
-        try {
-            wallTexture = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("/res/test/wall_tiles_013.png"));
-        } catch (IOException ex) {
-            Logger.getLogger(Wall.class.getName()).log(Level.SEVERE, null, ex);
-        }
         
         float heightFactor = Statics.getTextureFactor(wallTexture.getTextureHeight());
         float widthFactor = Statics.getTextureFactor(wallTexture.getTextureWidth());

@@ -13,7 +13,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import maps.Map;
 import maps.MapData;
-import misc.HelperFunctions;
 import misc.MapLoader;
 import misc.Model;
 import org.lwjgl.LWJGLException;
@@ -50,9 +49,9 @@ public class Glomes {
         //and so on are loaded.
         initGL();
         
-        loadMaps();
-        
         loadTextures();
+        
+        loadMaps();
         
         stateStack.push(menuState);
         stackHandler();
@@ -152,7 +151,9 @@ public class Glomes {
                 } else {
                     continue;
                 }
+                System.out.println(fileName);
                 textureMap.put(fileName, texture);
+                textureMap.put("/res/test/" + fileName, texture);
                 textureMap.put("res/test/" + fileName, texture);
 
             } catch (IOException ex) {

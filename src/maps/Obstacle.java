@@ -5,16 +5,11 @@
 package maps;
 
 import glomes.Statics;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import misc.HelperFunctions;
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.opengl.Texture;
-import org.newdawn.slick.opengl.TextureLoader;
-import org.newdawn.slick.util.ResourceLoader;
 
 
 /**
@@ -75,12 +70,9 @@ public class Obstacle {
     }
     
     private void createTop(){
-        try {
-            //TODO: create dynamic texture loading. ie. load the texture associated with the material.
-            topTexture = TextureLoader.getTexture("BMP", ResourceLoader.getResourceAsStream("/res/test/Crate.bmp"));
-        } catch (IOException ex) {
-            Logger.getLogger(Obstacle.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        //TODO: create dynamic texture loading. ie. load the texture associated with the material.
+        topTexture = Statics.textureMap.get("/res/test/Crate.bmp");
+        
         double heightFactor = Statics.getTextureFactor(topTexture.getTextureHeight());
         double widthFactor = Statics.getTextureFactor(topTexture.getTextureWidth());
         double[][] drawVertice = new double[vertice.size()][3];

@@ -21,8 +21,6 @@ import java.util.logging.Logger;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.opengl.Texture;
-import org.newdawn.slick.opengl.TextureLoader;
-import org.newdawn.slick.util.ResourceLoader;
 
 public class Model {
     ArrayList<Vector3f> vertices = new ArrayList();
