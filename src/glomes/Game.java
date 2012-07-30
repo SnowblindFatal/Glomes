@@ -144,7 +144,7 @@ public class Game extends GameStateTemplate {
         IntBuffer viewport = BufferUtils.createIntBuffer(16);
         FloatBuffer modelview = BufferUtils.createFloatBuffer(16);
         FloatBuffer projection = BufferUtils.createFloatBuffer(16);
-        //FloatBuffer winZ = BufferUtils.createFloatBuffer(1);
+        FloatBuffer winZ = BufferUtils.createFloatBuffer(1);
         FloatBuffer position = BufferUtils.createFloatBuffer(3);
         float winX, winY;
 
@@ -152,10 +152,11 @@ public class Game extends GameStateTemplate {
         GL11.glGetFloat( GL11.GL_PROJECTION_MATRIX, projection );
         GL11.glGetInteger( GL11.GL_VIEWPORT, viewport );
 
-        winX = (float)mouseX;
-        winY = (float)viewport.get(3) - (float)mouseY;
+        winX = (float)Mouse.getX();
+        winY = (float)Mouse.getY();
 
-        GLU.gluUnProject(winX, winY, 0, modelview, projection, viewport, position);
+        GL11.glReadPixels((int)winX, (int)winY, 1, 1, GL11.GL_DEPTH_COMPONENT, GL11.GL_FLOAT, winZ);
+        GLU.gluUnProject(winX, winY, winZ.get(0), modelview, projection, viewport, position);
 //        for (int i = 0;i < 3;i++)
 //            System.out.println(position.get(i));
     }
