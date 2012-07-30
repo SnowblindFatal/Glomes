@@ -1,7 +1,6 @@
 # Blender v2.59 (sub 0) OBJ File: 'torus.blend'
 # www.blender.org
 mtllib torus.mtl
-mtlfile res/test/Glass.bmp
 o Torus
 v 1.216406 -0.062810 -0.077389
 v 1.183509 0.060096 -0.077389

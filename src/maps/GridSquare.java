@@ -16,7 +16,12 @@ public class GridSquare {
     private LinkedList<Ball> balls;
     private LinkedList<Corner> corners;
     private LinkedList<Wall> walls;
-    
+    private float friction = -0.00001f;
+
+    public float getFriction() {
+        return friction;
+    }
+
     public GridSquare(){
         balls = new LinkedList();
         corners = new LinkedList();

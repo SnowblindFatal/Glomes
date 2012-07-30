@@ -5,12 +5,17 @@
 package glomes;
 
 import balls.Ball;
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import maps.GridSquare;
 import maps.Map;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.vector.Vector3f;
 
 /**
@@ -41,7 +46,7 @@ public class Game extends GameStateTemplate {
         quitBoolean = false;
         map = game.getMap();
         grid = map.getGrid();
-        camera = new Vector3f(0f, 0f, -60f);
+        camera = new Vector3f(-50f, -50f, -60f);
         
         System.out.println("moved to game");
         time();
@@ -70,9 +75,10 @@ public class Game extends GameStateTemplate {
     }
 
     private void input(){
-        if (Mouse.isButtonDown(0)){
+        if (Mouse.isButtonDown(0)){            
             mouseX = Mouse.getX() - Display.getWidth() / 2;
-            mouseY = (Mouse.getY() - Display.getHeight() / 2);
+            mouseY = Mouse.getY() - Display.getHeight() / 2;
+            selection();
             if (speed < 120) speed += scaledTime * 0.25;
         }else if (speed != 0) {
             ball = new Ball(camera, grid);
@@ -133,12 +139,32 @@ public class Game extends GameStateTemplate {
 
     }
 
+    private void selection()
+    {
+        IntBuffer viewport = BufferUtils.createIntBuffer(16);
+        FloatBuffer modelview = BufferUtils.createFloatBuffer(16);
+        FloatBuffer projection = BufferUtils.createFloatBuffer(16);
+        //FloatBuffer winZ = BufferUtils.createFloatBuffer(1);
+        FloatBuffer position = BufferUtils.createFloatBuffer(3);
+        float winX, winY;
+
+        GL11.glGetFloat( GL11.GL_MODELVIEW_MATRIX, modelview );
+        GL11.glGetFloat( GL11.GL_PROJECTION_MATRIX, projection );
+        GL11.glGetInteger( GL11.GL_VIEWPORT, viewport );
+
+        winX = (float)mouseX;
+        winY = (float)viewport.get(3) - (float)mouseY;
+
+        GLU.gluUnProject(winX, winY, 0, modelview, projection, viewport, position);
+//        for (int i = 0;i < 3;i++)
+//            System.out.println(position.get(i));
+    }
+
     private void draw() {
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-
             
         GL11.glLoadIdentity();                          // Reset The Current Modelview Matrix
-        GL11.glRotatef(0.0f, 0.0f, 0.0f, 0.0f);
+        //GL11.glRotatef(0.0f, 0.0f, 0.0f, 0.0f);
         GL11.glTranslatef(camera.getX(), camera.getY(), camera.getZ());
         
         map.draw(scaledTime);

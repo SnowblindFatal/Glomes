@@ -1,8 +1,6 @@
 package balls;
 
 import glomes.Statics;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.HashSet;
 import java.util.logging.Level;
@@ -11,6 +9,7 @@ import maps.Corner;
 import maps.GridSquare;
 import maps.Wall;
 import misc.My_Quaternion;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.glu.Sphere;
@@ -32,8 +31,7 @@ public class Ball extends Sphere{
     private GridSquare[][] grid;
     private GridSquare currentSquare;
     private int gridX, gridY, displayListIndex;    
-
-    private ByteBuffer tmp = ByteBuffer.allocateDirect(16*4);
+    
     private FloatBuffer rotationMatrix;
 
     private My_Quaternion rotation = new My_Quaternion();
@@ -50,9 +48,9 @@ public class Ball extends Sphere{
     }
 
     private void init(){
-        addToGrid();
-        tmp.order(ByteOrder.nativeOrder());
+        addToGrid();        
         rotation.setIdentity();
+        rotationMatrix = BufferUtils.createFloatBuffer(16);
         setNormals(GLU.GLU_SMOOTH);
         setTextureFlag(true);
         texture = Statics.textureMap.get("res/test/Glass.bmp");
@@ -63,7 +61,7 @@ public class Ball extends Sphere{
     }
 
     public void draw(float dTime){
-        Vector4f v1 = new Vector4f(speedCompound.getY(), -speedCompound.getX(), speedCompound.getZ(), speedCompound.length());
+        Vector4f v1 = new Vector4f(speedCompound.getY(), -speedCompound.getX(), speedCompound.getZ(), speedCompound.length() / radius);
         speedCompound.scale(0f);
 
         My_Quaternion quaternion = new My_Quaternion();
@@ -73,10 +71,9 @@ public class Ball extends Sphere{
         }
 
         rotation = (My_Quaternion) My_Quaternion.mul(rotation, quaternion, rotation);
-        rotationMatrix = (FloatBuffer) tmp.asFloatBuffer().put(
-                rotation.tomatrix()).flip();
+        rotationMatrix.put(rotation.tomatrix()).flip();
         
-        getTexture().bind();
+        texture.bind();
 
         GL11.glPushMatrix();
         GL11.glLoadIdentity();
@@ -88,9 +85,16 @@ public class Ball extends Sphere{
     }
 
     public void update(float dTime){
-//        Vector3f.add(location, speed, location);
+        if (speed.length() == 0) return;
+        
+        Vector3f friction = new Vector3f();
+        friction.set(speed);
+        friction.normalise();
+        friction.scale(currentSquare.getFriction());
+        accelerate(friction);
         location.translate(speed.getX() * dTime, speed.getY() * dTime, speed.getZ() * dTime);
         speedCompound.translate(speed.getX() * dTime, speed.getY() * dTime, speed.getZ() * dTime);
+
         updateGridPosition();
         checkCollisions();       
     }

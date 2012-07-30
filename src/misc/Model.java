@@ -27,8 +27,7 @@ public class Model {
     ArrayList<Vector3f> normals = new ArrayList();
     ArrayList<Vector3f> tCoords = new ArrayList();
     ArrayList<String> mtlName = new ArrayList();
-    ArrayList<int[]> polygonMaker = new ArrayList();
-    String textureFile = "";
+    ArrayList<int[]> polygonMaker = new ArrayList();    
     Texture texture;
     int dlIndex;
     float scale;
@@ -45,7 +44,7 @@ public class Model {
 
     public Model(){}
 
-    public void load(String fileName){
+    public void load(String fileName, String textureFile){
         parseString(fileName);
         System.out.println(Statics.textureMap.containsKey(textureFile));
         System.out.println(Statics.textureMap.get(textureFile));
@@ -86,9 +85,8 @@ public class Model {
 
         for (i = 0; i < j; i++) {
             str = lines.get(i);
-            if (str[0].equals("mtlfile")) {
-                textureFile = str[1].trim();
-            } else if (str[0].equals("usemtl")) {
+            
+            if (str[0].equals("usemtl")) {
                 mtlName.add(str[1]);
             } else if (str[0].equals("v")) {
                 createVertex(str, choice.vertex);

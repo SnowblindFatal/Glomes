@@ -48,11 +48,11 @@ public class Menu extends GameStateTemplate {
         
 
         Model model = new Model();
-        model.load("res/test/torus.obj");
+        model.load("res/test/torus.obj", "res/test/wall_tiles_013.png");
         
         while (quitBoolean == false){
             GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-            draw(); // Draw my own stuff first so the gui will be in front of everything.
+            //draw(); // Draw my own stuff first so the gui will be in front of everything.
             GL11.glLoadIdentity();
             GL11.glTranslatef(3f, -1f, -10f);
             //GL11.glTranslatef(1f, 0f, -5f);
