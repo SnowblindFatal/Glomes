@@ -8,8 +8,10 @@ import balls.Ball;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.LinkedList;
 import maps.GridSquare;
 import maps.Map;
+import maps.Selectable;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.input.Mouse;
@@ -24,7 +26,9 @@ import org.lwjgl.util.vector.Vector3f;
  */
 public class Game extends GameStateTemplate {
     private boolean quitBoolean;
+    private boolean n = false,f1 = false,shoot = false,del = false;
     private Ball ball;
+    private Selectable selected;
     private float mouseX, mouseY, dTime, scaledTime;
     private float speed = 0;
     private GridSquare[][] grid;
@@ -75,21 +79,29 @@ public class Game extends GameStateTemplate {
     }
 
     private void input(){
-        if (Mouse.isButtonDown(0)){            
-            mouseX = Mouse.getX() - Display.getWidth() / 2;
-            mouseY = Mouse.getY() - Display.getHeight() / 2;
-            selection();
-            if (speed < 120) speed += scaledTime * 0.25;
-        }else if (speed != 0) {
-            ball = new Ball(camera, grid);
-            Vector3f v = new Vector3f(mouseX,mouseY,0.0f);
+        if (Mouse.isButtonDown(0)){
+            if (selected != null && selected.getType().equals("Ball") && shoot){
+                if (speed < 120) speed += scaledTime * 0.25;
+            } else {
+                selection();
+                shoot = false;
+            }
+        } else if (speed != 0) {
+            ball = (Ball) selected;
+            float mPos[] = mouseToWorld();
+            mPos[0] -= ball.getLocation().getX();
+            mPos[1] -= ball.getLocation().getY();
+            Vector3f v = new Vector3f(mPos[0],mPos[1],0.0f);
+
             v.normalise();
             v.scale((float) speed / 300);
             ball.setSpeed(v);
             System.out.println("Speed: " + speed);
-            map.addBall(ball);
+            //map.addBall(ball);
             speed = 0;
+            //shoot = false;
         }
+
         if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)){
             camera.setX(camera.getX() + scaledTime * 0.1f);
         }
@@ -115,6 +127,33 @@ public class Game extends GameStateTemplate {
         if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
             factor = 1f;
         }
+
+        if (Keyboard.isKeyDown(Keyboard.KEY_N)){
+            if (!n){
+                ball = new Ball(camera, grid);
+                map.addBall(ball);
+                n = true;
+            }
+        } else n = false;
+
+        if (Keyboard.isKeyDown(Keyboard.KEY_F1)){
+            if (!f1){
+                shoot = !shoot;
+                f1 = true;
+            }
+        } else f1 = false;
+
+        if (Keyboard.isKeyDown(Keyboard.KEY_DELETE)){
+            if (selected != null){
+                int posX = (int) selected.getLocation().getX();
+                int posY = (int) selected.getLocation().getY();
+                map.removeBall((Ball) selected);
+                try{
+                    grid[posX][posY].removeBall((Ball) selected);
+                }catch(Exception e){}
+                selected = null;
+            }
+        }
         
         if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
             map.accelerateBall(0, scaledTime * 0.0001f * factor, 0);
@@ -139,8 +178,7 @@ public class Game extends GameStateTemplate {
 
     }
 
-    private void selection()
-    {
+    private float[] mouseToWorld (){
         IntBuffer viewport = BufferUtils.createIntBuffer(16);
         FloatBuffer modelview = BufferUtils.createFloatBuffer(16);
         FloatBuffer projection = BufferUtils.createFloatBuffer(16);
@@ -157,8 +195,37 @@ public class Game extends GameStateTemplate {
 
         GL11.glReadPixels((int)winX, (int)winY, 1, 1, GL11.GL_DEPTH_COMPONENT, GL11.GL_FLOAT, winZ);
         GLU.gluUnProject(winX, winY, winZ.get(0), modelview, projection, viewport, position);
-//        for (int i = 0;i < 3;i++)
-//            System.out.println(position.get(i));
+
+        float ret[] = {position.get(0),position.get(1)};
+        return ret;
+    }
+
+    private void selection()
+    {
+        LinkedList<Selectable> objects = new LinkedList();
+        
+        float obj[] = mouseToWorld();
+        float dist,distX,distY,shortestDist = 10f;
+
+        for (int x = (int) (obj[0] - 2);x < obj[0]+3;x++){
+            for (int y = (int) (obj[1] - 2);y < obj[1]+3;y++){
+                try{
+                    objects.addAll(grid[x][y].getBalls());
+                    for (Selectable one : objects){
+                        distX = one.getLocation().getX() - obj[0];
+                        distY = one.getLocation().getY() - obj[1];
+                        distX *= distX;
+                        distY *= distY;
+                        dist = (float) Math.sqrt(distX + distY);
+                        if (dist < shortestDist){
+                            shortestDist = dist;
+                            selected = one;
+                        }
+                    }
+                }catch(Exception e){}
+            }
+        }
+        if (shortestDist == 10f) selected = null;
     }
 
     private void draw() {

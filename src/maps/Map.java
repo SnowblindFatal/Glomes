@@ -157,6 +157,11 @@ public class Map {
     public void addBall(Ball newBall){
         balls.add(newBall);
     }
+
+    public void removeBall(Ball ball){
+        balls.removeFirstOccurrence(ball);
+    }
+
     public void accelerateBall(float x, float y, float z){
         if (balls.size() > 0){
             balls.getFirst().accelerate(x, y, z);

@@ -7,6 +7,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import maps.Corner;
 import maps.GridSquare;
+import maps.Selectable;
 import maps.Wall;
 import misc.My_Quaternion;
 import org.lwjgl.BufferUtils;
@@ -21,7 +22,7 @@ import org.newdawn.slick.opengl.Texture;
  *
  * @author Jusku
  */
-public class Ball extends Sphere{
+public class Ball extends Sphere implements Selectable{
     private final int slices = 20;
     private final float radius = 1.0f;    
     private final float mass = 1.0f;
@@ -35,6 +36,8 @@ public class Ball extends Sphere{
     private FloatBuffer rotationMatrix;
 
     private My_Quaternion rotation = new My_Quaternion();
+
+    public Ball(){}
 
     public Ball(Vector3f newCamera, GridSquare[][] newGrid){
         grid = newGrid;
@@ -353,8 +356,14 @@ public class Ball extends Sphere{
         return radius;
     }
 
+    @Override
     public Vector3f getLocation() {
         return location;
+    }
+
+    @Override
+    public String getType(){
+        return "Ball";
     }
 
     public Vector3f getSpeed() {
