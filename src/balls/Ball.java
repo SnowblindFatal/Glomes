@@ -50,6 +50,11 @@ public class Ball extends Sphere implements Selectable{
         init();
     }
 
+    public void delete(){
+        removeFromGrid();
+        GL11.glDeleteLists(displayListIndex, 1);
+    }
+
     private void init(){
         addToGrid();        
         rotation.setIdentity();

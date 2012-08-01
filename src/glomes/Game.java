@@ -145,12 +145,9 @@ public class Game extends GameStateTemplate {
 
         if (Keyboard.isKeyDown(Keyboard.KEY_DELETE)){
             if (selected != null){
-                int posX = (int) selected.getLocation().getX();
-                int posY = (int) selected.getLocation().getY();
-                map.removeBall((Ball) selected);
-                try{
-                    grid[posX][posY].removeBall((Ball) selected);
-                }catch(Exception e){}
+                Ball delBall = (Ball) selected;
+                delBall.delete();
+                map.removeBall(delBall);
                 selected = null;
             }
         }
