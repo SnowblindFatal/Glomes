@@ -68,11 +68,17 @@ public class Glomes {
         
         Display.setTitle(Statics.TITLE);
         //TODO: Replace with the perspective view mode can't remember whatsitcalled. Also probably redo this whole method.
-//        GL11.glOrtho(0, currentResolution[0], 0, currentResolution[1], 1, -1);
 
-        
         GL11.glEnable(GL11.GL_TEXTURE_2D); // Enable Texture Mapping
+        
+        //Anti-aliasing stuff:
+        
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glEnable(GL11.GL_LINE_SMOOTH);
         GL11.glShadeModel(GL11.GL_SMOOTH); // Enable Smooth Shading
+        GL11.glHint(GL11.GL_LINE_SMOOTH_HINT, GL11.GL_DONT_CARE);
+        
         GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Black Background
         GL11.glClearDepth(1.0); // Depth Buffer Setup
         GL11.glEnable(GL11.GL_DEPTH_TEST); // Enables Depth Testing

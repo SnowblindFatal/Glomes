@@ -248,18 +248,19 @@ public class Ball extends Sphere{
 
     private void applyBallCollision(Vector3f normal,Ball ball){
         System.out.println("BallCollide");
-        Vector3f n1 = new Vector3f(),n2 = new Vector3f(),
-                 t1 = new Vector3f(), t2 = new Vector3f(),
+        Vector3f normal1 = new Vector3f(),normal2 = new Vector3f(),
+                 tangent1 = new Vector3f(), tangent2 = new Vector3f(),
                  tangent = new Vector3f();
-        float moveDistance = radius - normal.length() / 2, nv1,nv2;
+        float moveDistance = (radius + ball.getRadius() - normal.length()) / 2, 
+                normal1Multiplier,normal2Multiplier;
         normal.normalise();
         tangent.set(-normal.getY(),normal.getX());
 
         //Speeds are projected to normal and tangent.
-        float len1 = Vector3f.dot(speed, normal),
-              len2 = Vector3f.dot(ball.getSpeed(), normal),
-              len3 = Vector3f.dot(speed, tangent),
-              len4 = Vector3f.dot(ball.getSpeed(), tangent);
+        float ball1NormalComponent = Vector3f.dot(speed, normal),
+              ball2NormalComponent = Vector3f.dot(ball.getSpeed(), normal),
+              ball1TangentComponent = Vector3f.dot(speed, tangent),
+              ball2TangentComponent = Vector3f.dot(ball.getSpeed(), tangent);
 
         Vector3f moveVector = new Vector3f();
         moveVector.set(normal);
@@ -268,28 +269,28 @@ public class Ball extends Sphere{
         moveVector.negate();
         Vector3f.add(ball.getLocation(),moveVector,ball.getLocation());
 
-        n1.set(normal);
-        n2.set(normal);
-        t1.set(tangent);
-        t2.set(tangent);
+        normal1.set(normal);
+        normal2.set(normal);
+        tangent1.set(tangent);
+        tangent2.set(tangent);
         
         //New speed in the normals direction. Note that if masses are equal the
         //speeds just flip. In the tangent's direction they stay the same.
-        nv1 = len1*(mass - ball.getMass()) + 2*ball.getMass()*len2;
-        nv1 /= mass + ball.getMass();
-        nv2 = len2*(ball.getMass() - mass) + 2*mass*len1;
-        nv2 /= mass + ball.getMass();
+        normal1Multiplier = ball1NormalComponent*(mass - ball.getMass()) + 2*ball.getMass()*ball2NormalComponent;
+        normal1Multiplier /= mass + ball.getMass();
+        normal2Multiplier = ball2NormalComponent*(ball.getMass() - mass) + 2*mass*ball1NormalComponent;
+        normal2Multiplier /= mass + ball.getMass();
         
-        n1.scale(nv1);
-        n2.scale(nv2);
-        t1.scale(len3);
-        t2.scale(len4);
+        normal1.scale(normal1Multiplier);
+        normal2.scale(normal2Multiplier);
+        tangent1.scale(ball1TangentComponent);
+        tangent2.scale(ball2TangentComponent);
 
-        Vector3f.add(n1,t1,n1);
-        Vector3f.add(n2, t2, n2);
+        Vector3f.add(normal1,tangent1,normal1);
+        Vector3f.add(normal2, tangent2, normal2);
                 
-        setSpeed(n1);
-        ball.setSpeed(n2);
+        setSpeed(normal1);
+        ball.setSpeed(normal2);
     }
 
     private boolean checkBallCollisions(Ball ball) {
