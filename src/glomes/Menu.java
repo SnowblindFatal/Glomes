@@ -6,14 +6,18 @@ package glomes;
 
 import de.matthiasmann.twl.Button;
 import de.matthiasmann.twl.EditField;
+import de.matthiasmann.twl.Event;
+import de.matthiasmann.twl.Event.Type;
 import de.matthiasmann.twl.GUI;
 import de.matthiasmann.twl.renderer.lwjgl.LWJGLRenderer;
 import de.matthiasmann.twl.theme.ThemeManager;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import misc.Model;
+import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
@@ -29,12 +33,13 @@ public class Menu extends GameStateTemplate {
     private Runnable testButtonAction;
     private GUI gui;
     private ThemeManager themeManager;
-    private LWJGLRenderer renderer;
+    private LWJGLRenderer guiRenderer;
     
     
     //temp stuff for quick 3d testing:
-    private float rtri, rquad;
-    
+    private float rtri = 1f, rquad;
+    Model model = new Model();
+
     
     
     public Menu(Glomes mainGame){
@@ -47,30 +52,11 @@ public class Menu extends GameStateTemplate {
         initTWL();
         
 
-        Model model = new Model();
-        model.load("res/test/torus.obj", "res/test/wall_tiles_013.png");
+        model.load("res/test/torus.obj", "res/test/Cube.bmp");
         
         while (quitBoolean == false){
-            GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-            //draw(); // Draw my own stuff first so the gui will be in front of everything.
-            GL11.glLoadIdentity();
-            GL11.glTranslatef(3f, -1f, -10f);
-            //GL11.glTranslatef(1f, 0f, -5f);
-            GL11.glRotatef(30f, 1f, 1f, 0f);
-            model.draw();
-            //Since we want to handle the input ourselves, we can't just call gui.update().
-            //This is why we separately do everything gui.update() does except for the input
-            //handling.
-            gui.setSize();
-            gui.updateTime();
-            handleInput();
-            gui.handleKeyRepeat();
-            gui.handleTooltips();
-            gui.updateTimers();
-            gui.invokeRunables();
-            gui.validateLayout();
-            gui.draw();
-            gui.setCursor();
+            draw3d(); // Draw my own stuff first so the gui will be in front of everything.
+            gui.update();
             if (Display.isCloseRequested()){
                 quitBoolean = true;
             }
@@ -78,95 +64,92 @@ public class Menu extends GameStateTemplate {
             Display.sync(60);
         }
     }
-
-    private void handleInput(){
-        //handleEvent();
+    //Override GUI's default input-handling scheme. Mouse input is still a bit
+    //of a mystery. If a widget happens to handle a mouse event, it doesn't appear
+    //here at all!
+    @Override
+    protected boolean handleEvent(Event evt){
         int eventKey, mouseX, mouseY, mouseWheelDelta;
         char eventChar;
-        boolean pressed;
-        mouseX = Mouse.getX();
-        mouseY = Mouse.getY();
+        boolean pressed, allowHandling;
+        Type eventType;
+        eventType = evt.getType();
+        eventKey = evt.getKeyCode();
+        mouseX = evt.getMouseX();
+        mouseY = evt.getMouseY();
+        mouseWheelDelta = evt.getMouseWheelDelta();
+        eventChar = evt.getKeyChar();
+        pressed = evt.isKeyPressedEvent();
+        allowHandling = true;
         
-        while (Keyboard.next()) {
-            eventKey = Keyboard.getEventKey();
-            eventChar = Keyboard.getEventCharacter();
-            pressed = Keyboard.getEventKeyState();
-            //If no widget finds any use for the keyboard event, it will
-            //return false and let my own logic deal with the input.
-            if (gui.handleKey(eventKey, eventChar, pressed) == false){
-//                System.out.println("no widget used keyboard event. Keyboard keyCode: " + eventKey + ", Character: " + eventChar);
-                if (pressed == true){
-                    switch (eventKey) {
-                        case Keyboard.KEY_ESCAPE:
-                            quitBoolean = true;
-                            break;
-                        case Keyboard.KEY_RETURN:
-                            allDone();
-                            break;
-                        case Keyboard.KEY_SPACE:
-                            break;
-                        case Keyboard.KEY_F1:
-
-                            //Is there a better way to clear focus?
-                            testButton.requestKeyboardFocus();
-                            testButton.giveupKeyboardFocus();
-                            break;
-                    }
-                }
-            }
-
+//        if (eventType == Type.MOUSE_BTNDOWN){
+//            allowHandling = false;
+//        }
+        if (Arrays.binarySearch(Statics.naughtyKeys, eventKey) >= 0) {
+            allowHandling = false;
         }
-        while (Mouse.next()){
-//            System.out.println("mouseX: " + mouseX + ", mouseY: " + mouseY);
-            Mouse.getDWheel();
-            eventKey = Mouse.getEventButton();
-            pressed = Mouse.getEventButtonState();
-            mouseWheelDelta = Mouse.getEventDWheel();
-            //If no widget finds any use for the mouse event, it will
-            //return false and let my own logic deal with the input.
-            //IMPORTANT: TWL uses flipped Y axis for mouse location!
-            if (gui.handleMouse(mouseX, Statics.getDisplayHeight() - mouseY, eventKey, pressed) == false){
-                
-//                System.out.println("no widget used mouse event. Event button: " + eventKey);
+        
+        
+        //Event used by a widget.
+        if (allowHandling == true && super.handleEvent(evt)) {
+            
+        } 
+        //Event not used by a widget.
+        else{
+            if (pressed == true) {
                 switch (eventKey) {
+                    case Keyboard.KEY_ESCAPE:
+                        quitBoolean = true;
+                        break;
+                    case Keyboard.KEY_RETURN:
+                        allDone();
+                        break;
+                    case Keyboard.KEY_SPACE:
+                        break;
+                    case Keyboard.KEY_F1:
+
+                        //Is there a better way to clear focus?
+                        testButton.requestKeyboardFocus();
+                        testButton.giveupKeyboardFocus();
+                        break;
                 }
             }
-            if (gui.handleMouseWheel(mouseWheelDelta) == false){
-//                System.out.println("no widget used mouse scroll. Scroll delta: " + mouseWheelDelta);
-            }
         }
-        
+        return true;
     }
     
-    private void draw() {
-        GL11.glLoadIdentity();                          // Reset The Current Modelview Matrix
-        GL11.glRotatef(rtri, 0.0f, 0.0f, 0.0f);
-        GL11.glTranslatef(0f, 0.0f, -10.0f);
+    private void draw3d() {
+        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+        GL11.glLoadIdentity();
+        GL11.glColor4f(1f, 1f, 1f, 1f);
+        GL11.glTranslatef(2f, 0f, -10f);
+        GL11.glRotatef(30f, 1.0f, 1.0f, 0.0f);
+        model.draw();
     }
     
     private void initTWL(){
-        //renderer is used by TWL to draw itself on the screen.
         try {
-            renderer = new LWJGLRenderer();
+            //renderer is used by TWL to draw itself on the screen.
+            guiRenderer = new LWJGLRenderer();
             //in here, "this" refers to the screen as a widget, I reckon.
-            gui = new GUI(this, renderer);
+            gui = new GUI(this, guiRenderer);
             //themeManager sets the look of all the widgets on the screen I think.
             //NOTE: If modifications to the xml-file don't seem to apply, use "Clean and build project" to remove all cached shit.
             //TODO: Our own custom UI theme. Doesn't need to be anything fancy, just SOMETHING that isn't
             //classic Windows look from the early 90s.
-            themeManager = ThemeManager.createThemeManager(getClass().getResource("/ui_themes/simple.xml"), renderer);
+            themeManager = ThemeManager.createThemeManager(getClass().getResource("/ui_themes/simple.xml"), guiRenderer);
             //without setTheme the theme defaults to name of the class in lowercase. In this case it would be "menu".
-            setTheme("");
+            this.setTheme("");
             //all in all, there seems to be three (four?) themes with the typical UI graphics: 
             //simple.xml, gui.xml, Eforen.xml and guiTheme.xml.
             //HOWEVER, of these, I could only get simple.xml to work properly. The others have weird xml
             //that is probably completely shit by anyone's standards.
-        } catch (Exception ex) {
+            
+            gui.applyTheme(themeManager);
+            setupWidgets();
+        } catch (LWJGLException | IOException ex) {
             Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        gui.applyTheme(themeManager);
-        setupWidgets();
     }
     
     private void setupWidgetActions(){
@@ -201,9 +184,10 @@ public class Menu extends GameStateTemplate {
     }
     private void allDone(){
         quitBoolean = true;
-        game.addToStack(Statics.GAME_STATE);
+        this.game.addToStack(Statics.GAME_STATE);
     }
     private void button0Action(){
+        allDone();
         System.out.println("button executed. Textbox content: " + testTextBox.getText());
     }
 }

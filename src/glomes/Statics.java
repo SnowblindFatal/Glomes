@@ -4,6 +4,8 @@
  */
 package glomes;
 
+import de.matthiasmann.twl.Event;
+import java.util.Arrays;
 import java.util.HashMap;
 import org.newdawn.slick.opengl.Texture;
 
@@ -24,8 +26,16 @@ public class Statics {
     private static int DisplayWidth = 800, DisplayHeight = 600;
     private static final float pixelsPerUnit = 32f;
     
+    //Keys defined here will not be used by the widgets under any condition.
+    //Experimental.
+    public static int[] naughtyKeys = { Event.KEY_ESCAPE,
+                                        Event.KEY_TAB,
+                                        Event.KEY_PAUSE};
     
     
+    public static void initialise(){
+        Arrays.sort(naughtyKeys);
+    }
     
     
     public static int getDisplayWidth() {

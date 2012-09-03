@@ -91,7 +91,7 @@ public class Ball extends Sphere{
         friction.set(speed);
         friction.normalise();
         friction.scale(currentSquare.getFriction());
-        accelerate(friction);
+        //accelerate(friction);
         location.translate(speed.getX() * dTime, speed.getY() * dTime, speed.getZ() * dTime);
         speedCompound.translate(speed.getX() * dTime, speed.getY() * dTime, speed.getZ() * dTime);
 
@@ -169,7 +169,7 @@ public class Ball extends Sphere{
         return false;
     }
     private void applyCornerCollision(Vector3f direction, float distance){
-        System.out.println("cornercollide");
+//        System.out.println("cornercollide");
         float help;
         float moveDistance = radius - distance;
         Vector3f moveVector = new Vector3f();
@@ -229,7 +229,7 @@ public class Ball extends Sphere{
     private void applyWallCollision(Wall wall, float distance){
         Vector3f normal = new Vector3f();
         normal.set(wall.getNormal());
-        System.out.println("WALLcollide");
+//        System.out.println("WALLcollide");
         float help;
         float moveDistance = radius - distance;
 //        System.out.println("mutliplierlength: " + moveDistance);
@@ -247,7 +247,7 @@ public class Ball extends Sphere{
     }
 
     private void applyBallCollision(Vector3f normal,Ball ball){
-        System.out.println("BallCollide");
+//        System.out.println("BallCollide");
         Vector3f normal1 = new Vector3f(),normal2 = new Vector3f(),
                  tangent1 = new Vector3f(), tangent2 = new Vector3f(),
                  tangent = new Vector3f();

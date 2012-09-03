@@ -116,10 +116,10 @@ public class Glomes {
     public void addToStack(int newState){
         switch (newState){
             case (Statics.GAME_STATE):
-                gameState.use();
+                stateStack.add(gameState);
                 break;
             case (Statics.MENU_STATE):
-                menuState.use();
+                stateStack.add(menuState);
                 break;
         }
     }

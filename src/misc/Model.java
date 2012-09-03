@@ -9,12 +9,7 @@ package misc;
  * @author Jusku
  */
 import glomes.Statics;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.FileInputStream;
-import java.io.DataInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -56,7 +51,7 @@ public class Model {
         char[] input = null;
         String[] str = new String[1];
         ArrayList<String[]> lines = new ArrayList();
-        int i = 0, j = 0;
+        int j = 0;
         boolean done = false;
         dlIndex = GL11.glGenLists(1);
 
@@ -71,7 +66,7 @@ public class Model {
             Logger.getLogger(Model.class.getName()).log(Level.SEVERE, null, ex);
         }
         str[0] = "";
-        for (i = 0; i < input.length; i++) {
+        for (int i = 0; i < input.length; i++) {
             if (input[i] == '\n') {
                 str = str[0].split(" ");
                 lines.add(str);
@@ -83,19 +78,24 @@ public class Model {
             str[0] += input[i];
         }
 
-        for (i = 0; i < j; i++) {
+        for (int i = 0; i < j; i++) {
             str = lines.get(i);
-            
-            if (str[0].equals("usemtl")) {
-                mtlName.add(str[1]);
-            } else if (str[0].equals("v")) {
-                createVertex(str, choice.vertex);
-            } else if (str[0].equals("vn")) {
-                createVertex(str, choice.normal);
-            } else if (str[0].equals("vt")) {
-                createVertex(str, choice.texture);
-            } else if (str[0].equals("f")) {
-                readPolygonInfo(str);
+            switch (str[0]) {
+                case "usemtl":
+                    mtlName.add(str[1]);
+                    break;
+                case "v":
+                    createVertex(str, choice.vertex);
+                    break;
+                case "vn":
+                    createVertex(str, choice.normal);
+                    break;
+                case "vt":
+                    createVertex(str, choice.texture);
+                    break;
+                case "f":
+                    readPolygonInfo(str);
+                    break;
             }
         }
     }
