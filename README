@@ -1,3 +1,6 @@
+Glomes is (was?) a project made by J. Saarela and J. Konttinen. It is a sketch of a game engine and includes 3d graphics, balls and their collisions, loading levels from a text file and some other features. The physics operate on 2d. A demo of the engine can be found here: http://www.youtube.com/watch?v=dMamNqJ3-XU
+
+
 Currently requires the following libraries:
 
 LWJGL 
